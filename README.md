@@ -102,13 +102,35 @@ Workflow: `.github/workflows/deploy.yml`
 Repository secrets required:
 
 - `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
 
-Vercel project should already be linked once using CLI or dashboard.
+`VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` are the Vercel identifiers for your project. Add them as GitHub secrets so the workflow can create `.vercel/project.json` during CI.
+
+Vercel project should be created once in the dashboard, then linked to this GitHub repo.
 
 Pipeline behavior:
 
-- Pull Request: lint + typecheck + build.
-- Push to `main`: lint + typecheck + build + deploy to Vercel.
+- Pull Request: lint + typecheck + build + preview deploy.
+- Push to `main`: lint + typecheck + build + production deploy.
+
+## How To Connect To Vercel Using GitHub Actions
+
+1. Create a Vercel project for this GitHub repository.
+2. Copy the project and organization IDs from Vercel settings.
+3. Add these GitHub repository secrets:
+	- `VERCEL_TOKEN`
+	- `VERCEL_ORG_ID`
+	- `VERCEL_PROJECT_ID`
+4. Add your app environment variables to Vercel and to GitHub Actions if the workflow needs them during build.
+5. Push a branch or open a PR to get a preview deployment.
+6. Merge to `main` to trigger the production deployment.
+
+Recommended Vercel project settings:
+
+- Production branch: `main`
+- Framework preset: Next.js
+- Root directory: repository root
 
 ## Scripts
 
