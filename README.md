@@ -113,6 +113,7 @@ Pipeline behavior:
 
 - Pull Request: lint + typecheck + build + preview deploy.
 - Push to `main`: lint + typecheck + build + production deploy.
+- Manual runs are available from the GitHub Actions tab via `workflow_dispatch`.
 
 ## How To Connect To Vercel Using GitHub Actions
 
