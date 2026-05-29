@@ -111,12 +111,10 @@ Vercel project should be created once in the dashboard, then linked to this GitH
 
 Pipeline behavior:
 
-- Pull Request: lint + typecheck + build + preview deploy.
 - Push to `main`: lint + typecheck + build + production deploy.
-- Manual runs are available from the GitHub Actions tab via `workflow_dispatch`.
+- Manual runs are available from the GitHub Actions tab via `workflow_dispatch` and trigger a production deploy.
 - The workflow uses `npx vercel@latest`, so no global Vercel CLI install is needed on the runner.
-- On manual runs, choose `preview` or `production` as the deploy target so the matching deploy job runs.
-- If you run the workflow on a branch push that is not `main`, the production job will still be skipped by design.
+- Branch pushes other than `main` only run if you manually dispatch the workflow.
 
 ## How To Connect To Vercel Using GitHub Actions
 
@@ -127,12 +125,13 @@ Pipeline behavior:
 	- `VERCEL_ORG_ID`
 	- `VERCEL_PROJECT_ID`
 4. Add your app environment variables to Vercel and to GitHub Actions if the workflow needs them during build.
-5. Push a branch or open a PR to get a preview deployment.
-6. Merge to `main` to trigger the production deployment.
+5. Push or merge to `main` to trigger the production deployment.
+6. Use manual dispatch from the Actions tab if you want to rerun a production deployment without a new commit.
 
 Recommended Vercel project settings:
 
 - Production branch: `main`
+- Preview deployments: disabled
 - Framework preset: Next.js
 - Root directory: repository root
 
