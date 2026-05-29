@@ -57,17 +57,14 @@ jobs:
           }
           EOF
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
       - name: Pull Vercel environment
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel@latest pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build preview deployment
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel@latest build --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy preview to Vercel
-        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel@latest deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
 
   deploy-production:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -93,14 +90,11 @@ jobs:
           }
           EOF
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
       - name: Pull Vercel environment
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel@latest pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build production deployment
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel@latest build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy to Vercel
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel@latest deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
