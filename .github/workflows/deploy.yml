@@ -2,6 +2,15 @@ name: CI and Deploy
 
 on:
   workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: "Choose which deployment job to run"
+        required: true
+        default: preview
+        type: choice
+        options:
+          - preview
+          - production
   pull_request:
     branches: [main]
   push:
@@ -34,7 +43,7 @@ jobs:
         run: npm run build
 
   deploy-preview:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_target == 'preview')
     needs: quality
     runs-on: ubuntu-latest
     steps:
@@ -67,7 +76,7 @@ jobs:
         run: npx vercel@latest deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
 
   deploy-production:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy_target == 'production')
     needs: quality
     runs-on: ubuntu-latest
     steps:

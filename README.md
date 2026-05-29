@@ -115,6 +115,8 @@ Pipeline behavior:
 - Push to `main`: lint + typecheck + build + production deploy.
 - Manual runs are available from the GitHub Actions tab via `workflow_dispatch`.
 - The workflow uses `npx vercel@latest`, so no global Vercel CLI install is needed on the runner.
+- On manual runs, choose `preview` or `production` as the deploy target so the matching deploy job runs.
+- If you run the workflow on a branch push that is not `main`, the production job will still be skipped by design.
 
 ## How To Connect To Vercel Using GitHub Actions
 
