@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f5ee;
+  --foreground: #132332;
+  --surface: #fffdf6;
+  --surface-strong: #f2e8d7;
+  --accent: #007a67;
+  --accent-strong: #005347;
+  --danger: #9a2f2f;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-title);
+}
+
+body {
+  background:
+    radial-gradient(circle at 12% 12%, #fef5d8 0%, transparent 35%),
+    radial-gradient(circle at 88% 24%, #e2f2ea 0%, transparent 31%),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+.page-shell {
+  width: min(1080px, 100% - 2rem);
+  margin: 2rem auto;
+}
+
+.card {
+  border: 1px solid color-mix(in oklab, var(--foreground) 13%, transparent);
+  background: var(--surface);
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px -18px rgba(8, 26, 41, 0.35);
+}
+
+.pill {
+  border: 1px solid color-mix(in oklab, var(--foreground) 16%, transparent);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  background: var(--surface);
+}
+
+.button {
+  border-radius: 0.75rem;
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 120ms ease, background-color 120ms ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button-primary {
+  background: var(--accent);
+  color: #effffc;
+}
+
+.button-primary:hover {
+  background: var(--accent-strong);
+}
+
+.button-danger {
+  background: var(--danger);
+  color: #fff7f7;
+}
