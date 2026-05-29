@@ -55,6 +55,18 @@ Required:
 - `GITHUB_SECRET`: GitHub OAuth app client secret
 - `ADMIN_EMAILS`: comma-separated admin GitHub emails
 
+Behavior when env vars are missing:
+
+- Missing `DATABASE_URL`: the public pages and DB-backed admin pages render a setup notice instead of crashing.
+- Missing `GITHUB_ID`, `GITHUB_SECRET`, or `NEXTAUTH_SECRET`: the admin entry page renders an auth setup notice instead of sending users into a broken sign-in flow.
+
+Minimum envs by feature:
+
+- Public song list and song detail: `DATABASE_URL`
+- Admin sign-in: `GITHUB_ID`, `GITHUB_SECRET`, `NEXTAUTH_SECRET`
+- Admin authorization: `ADMIN_EMAILS`
+- Production canonical URL: `NEXTAUTH_URL`
+
 ## Local Development
 
 ```bash
@@ -65,6 +77,8 @@ npm run dev
 ```
 
 Open http://localhost:3000
+
+If you open the app before configuring the database or auth env vars, you will see setup guidance in the UI rather than a server error.
 
 ## CSV Import Format
 

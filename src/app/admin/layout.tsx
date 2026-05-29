@@ -1,10 +1,16 @@
 import Link from "next/link";
 
+import { AuthSetupNotice } from "@/components/auth-setup-notice";
+import { isAuthConfigured } from "@/lib/auth-config";
 import { requireAdminPage } from "@/lib/admin-guard";
 
 export default async function AdminLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  if (!isAuthConfigured()) {
+    return <AuthSetupNotice />;
+  }
+
   const session = await requireAdminPage();
 
   return (

@@ -1,6 +1,8 @@
 import Link from "next/link";
 
+import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { DeleteSongButton } from "@/components/delete-song-button";
+import { isMissingDatabaseConfigError } from "@/lib/database-errors";
 import { listSongs } from "@/lib/songs";
 
 type SongsAdminPageProps = {
@@ -13,11 +15,26 @@ type SongsAdminPageProps = {
 
 export default async function SongsAdminPage({ searchParams }: SongsAdminPageProps) {
   const params = await searchParams;
-  const songs = await listSongs({
-    q: params.q,
-    year: params.year ? Number(params.year) : undefined,
-    rating: params.rating ? Number(params.rating) : undefined,
-  });
+  let songs;
+
+  try {
+    songs = await listSongs({
+      q: params.q,
+      year: params.year ? Number(params.year) : undefined,
+      rating: params.rating ? Number(params.rating) : undefined,
+    });
+  } catch (error) {
+    if (isMissingDatabaseConfigError(error)) {
+      return (
+        <DatabaseSetupNotice
+          title="Song management is unavailable"
+          description="Admin song management needs a database connection before it can list or edit songs."
+        />
+      );
+    }
+
+    throw error;
+  }
 
   return (
     <section className="card p-5">

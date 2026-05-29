@@ -4,6 +4,9 @@ import GitHub from "next-auth/providers/github";
 
 import { isAdminEmail } from "@/lib/auth";
 
+const authSecret = process.env.NEXTAUTH_SECRET ??
+  (process.env.NODE_ENV !== "production" ? "local-development-secret" : undefined);
+
 declare module "next-auth" {
   interface Session {
     user: {
@@ -13,6 +16,8 @@ declare module "next-auth" {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  secret: authSecret,
+  trustHost: true,
   providers: [
     GitHub({
       clientId: process.env.GITHUB_ID,

@@ -1,7 +1,24 @@
+import { DatabaseSetupNotice } from "@/components/database-setup-notice";
+import { isMissingDatabaseConfigError } from "@/lib/database-errors";
 import { getSongStats } from "@/lib/songs";
 
 export default async function AdminDashboardPage() {
-  const stats = await getSongStats();
+  let stats;
+
+  try {
+    stats = await getSongStats();
+  } catch (error) {
+    if (isMissingDatabaseConfigError(error)) {
+      return (
+        <DatabaseSetupNotice
+          title="Admin dashboard is waiting for database setup"
+          description="Admin stats cannot load until the project has a valid database connection."
+        />
+      );
+    }
+
+    throw error;
+  }
 
   return (
     <section className="grid gap-4 sm:grid-cols-2">

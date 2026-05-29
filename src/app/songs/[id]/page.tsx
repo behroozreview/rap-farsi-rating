@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { DatabaseSetupNotice } from "@/components/database-setup-notice";
+import { isMissingDatabaseConfigError } from "@/lib/database-errors";
 import { getSongById } from "@/lib/songs";
 
 type SongPageProps = {
@@ -9,7 +11,22 @@ type SongPageProps = {
 
 export default async function SongPage({ params }: SongPageProps) {
   const { id } = await params;
-  const song = await getSongById(Number(id));
+  let song;
+
+  try {
+    song = await getSongById(Number(id));
+  } catch (error) {
+    if (isMissingDatabaseConfigError(error)) {
+      return (
+        <DatabaseSetupNotice
+          title="Song detail is unavailable"
+          description="This page needs the database connection before individual song entries can load."
+        />
+      );
+    }
+
+    throw error;
+  }
 
   if (!song) {
     notFound();

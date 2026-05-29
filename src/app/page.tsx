@@ -1,5 +1,8 @@
 import Link from "next/link";
 
+import { isAuthConfigured } from "@/lib/auth-config";
+import { DatabaseSetupNotice } from "@/components/database-setup-notice";
+import { isMissingDatabaseConfigError } from "@/lib/database-errors";
 import { listSongs } from "@/lib/songs";
 
 type HomeProps = {
@@ -15,8 +18,24 @@ export default async function Home({ searchParams }: HomeProps) {
   const q = params.q?.trim();
   const year = params.year ? Number(params.year) : undefined;
   const rating = params.rating ? Number(params.rating) : undefined;
+  const authConfigured = isAuthConfigured();
 
-  const songs = await listSongs({ q, year, rating });
+  let songs;
+
+  try {
+    songs = await listSongs({ q, year, rating });
+  } catch (error) {
+    if (isMissingDatabaseConfigError(error)) {
+      return (
+        <DatabaseSetupNotice
+          title="Song archive is not configured yet"
+          description="The public list needs a database connection before it can load your ratings."
+        />
+      );
+    }
+
+    throw error;
+  }
 
   return (
     <main className="page-shell flex flex-1 flex-col gap-4 pb-10">
@@ -29,12 +48,14 @@ export default async function Home({ searchParams }: HomeProps) {
             </h1>
           </div>
           <div className="flex gap-2">
-            <Link className="pill" href="/api/auth/signin">
-              Admin Sign In
-            </Link>
             <Link className="pill" href="/admin">
-              Admin Panel
+              {authConfigured ? "Admin Panel" : "Admin Setup"}
             </Link>
+            {authConfigured ? (
+              <Link className="pill" href="/api/auth/signin">
+                Admin Sign In
+              </Link>
+            ) : null}
           </div>
         </div>
         <form className="mt-5 flex flex-wrap gap-2" action="/" method="get">
