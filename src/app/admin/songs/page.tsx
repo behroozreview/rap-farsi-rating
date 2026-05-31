@@ -3,7 +3,7 @@ import Link from "next/link";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { DeleteSongButton } from "@/components/delete-song-button";
 import { isMissingDatabaseConfigError } from "@/lib/database-errors";
-import { listSongs } from "@/lib/songs";
+import { listSongYears, listSongs } from "@/lib/songs";
 
 type SongsAdminPageProps = {
   searchParams: Promise<{
@@ -13,14 +13,33 @@ type SongsAdminPageProps = {
   }>;
 };
 
+function getRatingRowClass(rating: number) {
+  if (rating >= 8) return "bg-emerald-500/10";
+  if (rating >= 6) return "bg-sky-500/10";
+  if (rating >= 4) return "bg-amber-500/10";
+  if (rating >= 2) return "bg-orange-500/10";
+  return "bg-rose-500/10";
+}
+
 export default async function SongsAdminPage({ searchParams }: SongsAdminPageProps) {
   const params = await searchParams;
+  const yearParam = params.year?.trim();
   let songs;
+  let years;
 
   try {
+    years = await listSongYears();
+
+    const latestYear = years[0];
+    const selectedYear = yearParam === "all"
+      ? undefined
+      : yearParam
+        ? Number(yearParam)
+        : latestYear;
+
     songs = await listSongs({
       q: params.q,
-      year: params.year ? Number(params.year) : undefined,
+      year: selectedYear,
       rating: params.rating ? Number(params.rating) : undefined,
     });
   } catch (error) {
@@ -35,6 +54,9 @@ export default async function SongsAdminPage({ searchParams }: SongsAdminPagePro
 
     throw error;
   }
+
+  const latestYear = years[0];
+  const selectedYearValue = yearParam ?? (latestYear ? String(latestYear) : "all");
 
   return (
     <section className="card p-5">
@@ -53,17 +75,16 @@ export default async function SongsAdminPage({ searchParams }: SongsAdminPagePro
           type="search"
           name="q"
           defaultValue={params.q}
-          placeholder="Search title"
+          placeholder="Search title or artist"
         />
-        <input
-          className="pill w-36"
-          type="number"
-          min={1350}
-          max={1499}
-          name="year"
-          defaultValue={params.year}
-          placeholder="Year"
-        />
+        <select className="pill w-40" name="year" defaultValue={selectedYearValue}>
+          <option value="all">All years</option>
+          {years.map((itemYear) => (
+            <option key={itemYear} value={itemYear}>
+              {itemYear}
+            </option>
+          ))}
+        </select>
         <input
           className="pill w-28"
           type="number"
@@ -91,7 +112,10 @@ export default async function SongsAdminPage({ searchParams }: SongsAdminPagePro
           </thead>
           <tbody>
             {songs.map((song) => (
-              <tr key={song.id} className="border-b border-foreground/10 last:border-b-0">
+              <tr
+                key={song.id}
+                className={`${getRatingRowClass(song.rating)} border-b border-foreground/10 last:border-b-0`}
+              >
                 <td className="py-2">{song.title}</td>
                 <td className="py-2">{song.artist || "-"}</td>
                 <td className="py-2">{song.persianYear}</td>

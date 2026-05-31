@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, ilike, isNotNull, ne, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, isNotNull, ne, or, sql } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { songs } from "@/db/schema";
@@ -15,7 +15,7 @@ export async function listSongs(filters: SongFilters = {}) {
 
   const predicates = [];
   if (filters.q) {
-    predicates.push(ilike(songs.title, `%${filters.q}%`));
+    predicates.push(or(ilike(songs.title, `%${filters.q}%`), ilike(songs.artist, `%${filters.q}%`)));
   }
   if (filters.year) {
     predicates.push(eq(songs.persianYear, filters.year));
@@ -31,6 +31,18 @@ export async function listSongs(filters: SongFilters = {}) {
     .from(songs)
     .where(whereClause)
     .orderBy(desc(songs.persianYear), desc(songs.rating), asc(songs.title));
+}
+
+export async function listSongYears() {
+  const db = getDb();
+
+  const rows = await db
+    .select({ year: songs.persianYear })
+    .from(songs)
+    .groupBy(songs.persianYear)
+    .orderBy(desc(songs.persianYear));
+
+  return rows.map((row) => row.year);
 }
 
 export async function getSongById(id: number) {

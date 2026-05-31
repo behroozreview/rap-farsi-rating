@@ -3,7 +3,7 @@ import Link from "next/link";
 import { isAuthConfigured } from "@/lib/auth-config";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { isMissingDatabaseConfigError } from "@/lib/database-errors";
-import { listSongs } from "@/lib/songs";
+import { listSongYears, listSongs } from "@/lib/songs";
 
 type HomeProps = {
   searchParams: Promise<{
@@ -13,17 +13,35 @@ type HomeProps = {
   }>;
 };
 
+function getRatingRowClass(rating: number) {
+  if (rating >= 8) return "bg-emerald-500/10";
+  if (rating >= 6) return "bg-sky-500/10";
+  if (rating >= 4) return "bg-amber-500/10";
+  if (rating >= 2) return "bg-orange-500/10";
+  return "bg-rose-500/10";
+}
+
 export default async function Home({ searchParams }: HomeProps) {
   const params = await searchParams;
   const q = params.q?.trim();
-  const year = params.year ? Number(params.year) : undefined;
+  const yearParam = params.year?.trim();
   const rating = params.rating ? Number(params.rating) : undefined;
   const authConfigured = isAuthConfigured();
 
   let songs;
+  let years;
 
   try {
-    songs = await listSongs({ q, year, rating });
+    years = await listSongYears();
+
+    const latestYear = years[0];
+    const selectedYear = yearParam === "all"
+      ? undefined
+      : yearParam
+        ? Number(yearParam)
+        : latestYear;
+
+    songs = await listSongs({ q, year: selectedYear, rating });
   } catch (error) {
     if (isMissingDatabaseConfigError(error)) {
       return (
@@ -36,6 +54,9 @@ export default async function Home({ searchParams }: HomeProps) {
 
     throw error;
   }
+
+  const latestYear = years[0];
+  const selectedYearValue = yearParam ?? (latestYear ? String(latestYear) : "all");
 
   return (
     <main className="page-shell flex flex-1 flex-col gap-4 pb-10">
@@ -63,18 +84,17 @@ export default async function Home({ searchParams }: HomeProps) {
             className="pill min-w-60"
             type="search"
             name="q"
-            placeholder="Search title"
+            placeholder="Search title or artist"
             defaultValue={q}
           />
-          <input
-            className="pill w-36"
-            type="number"
-            min={1350}
-            max={1499}
-            name="year"
-            placeholder="Persian year"
-            defaultValue={year}
-          />
+          <select className="pill w-40" name="year" defaultValue={selectedYearValue}>
+            <option value="all">All years</option>
+            {years.map((itemYear) => (
+              <option key={itemYear} value={itemYear}>
+                {itemYear}
+              </option>
+            ))}
+          </select>
           <input
             className="pill w-28"
             type="number"
@@ -110,7 +130,10 @@ export default async function Home({ searchParams }: HomeProps) {
             </thead>
             <tbody>
               {songs.map((song) => (
-                <tr key={song.id} className="border-b border-foreground/10 last:border-b-0">
+                <tr
+                  key={song.id}
+                  className={`${getRatingRowClass(song.rating)} border-b border-foreground/10 last:border-b-0`}
+                >
                   <td className="px-5 py-3">
                     <Link href={`/songs/${song.id}`} className="font-semibold hover:underline">
                       {song.title}
