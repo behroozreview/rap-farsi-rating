@@ -14,6 +14,7 @@ type HomeProps = {
 };
 
 function getRatingRowClass(rating: number) {
+  if (rating >= 9) return "bg-emerald-600/10";
   if (rating >= 8) return "bg-emerald-500/10";
   if (rating >= 6) return "bg-sky-500/10";
   if (rating >= 4) return "bg-amber-500/10";
@@ -22,6 +23,7 @@ function getRatingRowClass(rating: number) {
 }
 
 function getScoreBarClass(rating: number) {
+  if (rating >= 9) return "bg-emerald-600";
   if (rating >= 8) return "bg-emerald-500";
   if (rating >= 6) return "bg-sky-500";
   if (rating >= 4) return "bg-amber-500";
