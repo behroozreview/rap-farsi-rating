@@ -19,8 +19,8 @@ export default async function SongPage({ params }: SongPageProps) {
     if (isMissingDatabaseConfigError(error)) {
       return (
         <DatabaseSetupNotice
-          title="Song detail is unavailable"
-          description="This page needs the database connection before individual song entries can load."
+          title="Single detail is unavailable"
+          description="This page needs the database connection before individual single entries can load."
         />
       );
     }
@@ -35,7 +35,7 @@ export default async function SongPage({ params }: SongPageProps) {
   return (
     <main className="page-shell">
       <article className="card p-6">
-        <p className="text-sm uppercase tracking-[0.2em] text-foreground/65">Song Detail</p>
+        <p className="text-sm uppercase tracking-[0.2em] text-foreground/65">Single Detail</p>
         <h1 className="mt-2 text-4xl font-semibold" style={{ fontFamily: "var(--font-title)" }}>
           {song.title}
         </h1>
@@ -62,11 +62,11 @@ export default async function SongPage({ params }: SongPageProps) {
         <div className="mt-6 flex flex-wrap gap-3">
           {song.url ? (
             <a className="button button-primary" href={song.url} target="_blank" rel="noreferrer">
-              Open Source URL
+              Open Single Link
             </a>
           ) : null}
           <Link className="button pill" href="/">
-            Back to List
+            Back to Singles
           </Link>
         </div>
       </article>

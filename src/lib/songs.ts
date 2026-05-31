@@ -10,6 +10,28 @@ export type SongFilters = {
   rating?: number;
 };
 
+export type ScoreDistributionItem = {
+  rating: number;
+  count: number;
+};
+
+export type YearReleaseItem = {
+  year: number;
+  count: number;
+};
+
+export type ArtistReleaseItem = {
+  artist: string;
+  count: number;
+};
+
+export type PublicSongStats = {
+  totalSongs: number;
+  scoreDistribution: ScoreDistributionItem[];
+  releasesByYear: YearReleaseItem[];
+  topArtists: ArtistReleaseItem[];
+};
+
 export async function listSongs(filters: SongFilters = {}) {
   const db = getDb();
 
@@ -120,5 +142,37 @@ export async function getSongStats() {
   return {
     totalSongs: totalRow?.value ?? 0,
     topYears,
+  };
+}
+
+export async function getPublicSongStats(): Promise<PublicSongStats> {
+  const db = getDb();
+
+  const [totalRow, scoreDistribution, releasesByYear, topArtists] = await Promise.all([
+    db.select({ value: count() }).from(songs),
+    db
+      .select({ rating: songs.rating, count: count() })
+      .from(songs)
+      .groupBy(songs.rating)
+      .orderBy(asc(songs.rating)),
+    db
+      .select({ year: songs.persianYear, count: count() })
+      .from(songs)
+      .groupBy(songs.persianYear)
+      .orderBy(desc(songs.persianYear)),
+    db
+      .select({ artist: songs.artist, count: count() })
+      .from(songs)
+      .where(ne(songs.artist, ""))
+      .groupBy(songs.artist)
+      .orderBy(desc(count()), asc(songs.artist))
+      .limit(10),
+  ]);
+
+  return {
+    totalSongs: totalRow[0]?.value ?? 0,
+    scoreDistribution,
+    releasesByYear,
+    topArtists,
   };
 }
