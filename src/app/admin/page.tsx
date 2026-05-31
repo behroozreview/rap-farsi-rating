@@ -1,4 +1,5 @@
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
+import { ClearImportedSongsButton } from "@/components/clear-imported-songs-button";
 import { isMissingDatabaseConfigError } from "@/lib/database-errors";
 import { getSongStats } from "@/lib/songs";
 
@@ -40,6 +41,16 @@ export default async function AdminDashboardPage() {
           ))}
           {stats.topYears.length === 0 ? <li>No songs yet.</li> : null}
         </ul>
+      </article>
+
+      <article className="card p-5 sm:col-span-2">
+        <p className="text-sm uppercase tracking-[0.2em] text-foreground/60">Maintenance</p>
+        <p className="mt-2 text-sm text-foreground/75">
+          Remove all songs added via CSV import. Manually created songs are preserved.
+        </p>
+        <div className="mt-4">
+          <ClearImportedSongsButton />
+        </div>
       </article>
     </section>
   );

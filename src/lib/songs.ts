@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, ilike, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, isNotNull, ne, sql } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { songs } from "@/db/schema";
@@ -78,6 +78,16 @@ export async function deleteSong(id: number) {
   const db = getDb();
   const [song] = await db.delete(songs).where(eq(songs.id, id)).returning();
   return song;
+}
+
+export async function deleteImportedSongs() {
+  const db = getDb();
+  const deleted = await db
+    .delete(songs)
+    .where(and(isNotNull(songs.importedFrom), ne(songs.importedFrom, "manual")))
+    .returning({ id: songs.id });
+
+  return deleted.length;
 }
 
 export async function getSongStats() {
