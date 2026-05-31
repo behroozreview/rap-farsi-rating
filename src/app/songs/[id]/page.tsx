@@ -60,9 +60,11 @@ export default async function SongPage({ params }: SongPageProps) {
         ) : null}
 
         <div className="mt-6 flex flex-wrap gap-3">
-          <a className="button button-primary" href={song.url} target="_blank" rel="noreferrer">
-            Open Source URL
-          </a>
+          {song.url ? (
+            <a className="button button-primary" href={song.url} target="_blank" rel="noreferrer">
+              Open Source URL
+            </a>
+          ) : null}
           <Link className="button pill" href="/">
             Back to List
           </Link>

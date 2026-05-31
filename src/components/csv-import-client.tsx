@@ -10,7 +10,7 @@ type PreviewError = {
 type PreviewRow = {
   title: string;
   artist?: string;
-  url: string;
+  url?: string;
   rating: number;
   persianYear: number;
 };

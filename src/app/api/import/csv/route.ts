@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     await db.insert(songs).values({
       title: row.title,
       artist: row.artist ?? "",
-      url: row.url,
+      url: row.url ?? "",
       rating: row.rating,
       persianYear: row.persianYear,
       importedFrom: body.fileName ?? "csv_import",

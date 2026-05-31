@@ -67,7 +67,7 @@ export default async function SongsAdminPage({ searchParams }: SongsAdminPagePro
         <input
           className="pill w-28"
           type="number"
-          min={1}
+          min={0}
           max={9}
           name="rating"
           defaultValue={params.rating}

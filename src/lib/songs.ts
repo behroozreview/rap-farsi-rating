@@ -45,6 +45,7 @@ export async function createSong(input: SongInput, importedFrom?: string) {
     .insert(songs)
     .values({
       ...input,
+      url: input.url ?? "",
       importedFrom,
       notes: input.notes ?? null,
       artist: input.artist ?? "",
@@ -56,10 +57,15 @@ export async function createSong(input: SongInput, importedFrom?: string) {
 
 export async function updateSong(id: number, input: SongPatchInput) {
   const db = getDb();
+  const sanitizedInput = {
+    ...input,
+    ...(Object.prototype.hasOwnProperty.call(input, "url") ? { url: input.url ?? "" } : {}),
+  };
+
   const [song] = await db
     .update(songs)
     .set({
-      ...input,
+      ...sanitizedInput,
       updatedAt: sql`now()`,
     })
     .where(eq(songs.id, id))

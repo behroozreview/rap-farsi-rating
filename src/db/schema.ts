@@ -29,7 +29,7 @@ export const songs = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [
-    check("rating_range", sql`${table.rating} >= 1 AND ${table.rating} <= 9`),
+    check("rating_range", sql`${table.rating} >= 0 AND ${table.rating} <= 9`),
     check(
       "persian_year_range",
       sql`${table.persianYear} >= 1350 AND ${table.persianYear} <= 1499`

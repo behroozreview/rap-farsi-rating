@@ -44,7 +44,7 @@ export default async function Home({ searchParams }: HomeProps) {
           <div>
             <p className="text-sm uppercase tracking-[0.2em] text-foreground/70">RapFarsi Archive</p>
             <h1 className="text-4xl font-semibold" style={{ fontFamily: "var(--font-title)" }}>
-              Song Ratings (1-9)
+              Song Ratings (0-9)
             </h1>
           </div>
           <div className="flex gap-2">
@@ -78,7 +78,7 @@ export default async function Home({ searchParams }: HomeProps) {
           <input
             className="pill w-28"
             type="number"
-            min={1}
+            min={0}
             max={9}
             name="rating"
             placeholder="Rating"
@@ -120,14 +120,18 @@ export default async function Home({ searchParams }: HomeProps) {
                   <td className="px-5 py-3">{song.persianYear}</td>
                   <td className="px-5 py-3">{song.rating}/9</td>
                   <td className="px-5 py-3">
-                    <a
-                      className="text-[var(--accent-strong)] underline-offset-2 hover:underline"
-                      href={song.url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Open Link
-                    </a>
+                    {song.url ? (
+                      <a
+                        className="text-[var(--accent-strong)] underline-offset-2 hover:underline"
+                        href={song.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Open Link
+                      </a>
+                    ) : (
+                      <span className="text-foreground/60">-</span>
+                    )}
                   </td>
                 </tr>
               ))}

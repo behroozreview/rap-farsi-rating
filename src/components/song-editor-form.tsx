@@ -6,7 +6,7 @@ import { useState } from "react";
 type SongFormData = {
   title: string;
   artist: string;
-  url: string;
+  url?: string;
   rating: number;
   persianYear: number;
   notes?: string | null;
@@ -74,16 +74,16 @@ export function SongEditorForm({ mode, songId, initialValue }: SongEditorFormPro
 
       <label className="flex flex-col gap-1 text-sm">
         URL
-        <input className="pill" name="url" required defaultValue={initialValue?.url ?? ""} />
+        <input className="pill" name="url" defaultValue={initialValue?.url ?? ""} />
       </label>
 
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm">
-          Rating (1-9)
+          Rating (0-9)
           <input
             className="pill"
             type="number"
-            min={1}
+            min={0}
             max={9}
             name="rating"
             required

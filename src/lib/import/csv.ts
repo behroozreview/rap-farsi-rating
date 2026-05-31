@@ -50,6 +50,24 @@ function splitArtistAndTitle(rawTitle?: string, rawArtist?: string) {
   return { artist: "", title };
 }
 
+function normalizeCsvUrl(rawUrl?: string) {
+  const value = rawUrl?.trim();
+  if (!value) {
+    return undefined;
+  }
+
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      return value;
+    }
+  } catch {
+    return undefined;
+  }
+
+  return undefined;
+}
+
 export function parseSongCsv(text: string): CsvParseResult {
   const parsed = Papa.parse<CsvRawRow>(text, {
     header: true,
@@ -68,7 +86,7 @@ export function parseSongCsv(text: string): CsvParseResult {
     const normalized = {
       title,
       artist,
-      url: row.url ?? row.link,
+      url: normalizeCsvUrl(row.url ?? row.link),
       rating: row.rating ?? row.score,
       persianYear,
     };
