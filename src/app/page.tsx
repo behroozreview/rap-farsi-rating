@@ -1,9 +1,11 @@
 import Link from "next/link";
 
+import { SongSourceLink } from "@/components/song-source-link";
 import { isAuthConfigured } from "@/lib/auth-config";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { isMissingDatabaseConfigError } from "@/lib/database-errors";
-import { getPublicSongStats, listSongYears, listSongs } from "@/lib/songs";
+import { listSongYears, listSongs } from "@/lib/songs";
+import { getRatingRowClass } from "@/lib/song-colors";
 
 type HomeProps = {
   searchParams: Promise<{
@@ -12,24 +14,6 @@ type HomeProps = {
     rating?: string;
   }>;
 };
-
-function getRatingRowClass(rating: number) {
-  if (rating >= 9) return "bg-emerald-600/10";
-  if (rating >= 8) return "bg-emerald-500/10";
-  if (rating >= 6) return "bg-sky-500/10";
-  if (rating >= 4) return "bg-amber-500/10";
-  if (rating >= 2) return "bg-orange-500/10";
-  return "bg-rose-500/10";
-}
-
-function getScoreBarClass(rating: number) {
-  if (rating >= 9) return "bg-emerald-600";
-  if (rating >= 8) return "bg-emerald-500";
-  if (rating >= 6) return "bg-sky-500";
-  if (rating >= 4) return "bg-amber-500";
-  if (rating >= 2) return "bg-orange-500";
-  return "bg-rose-500";
-}
 
 export default async function Home({ searchParams }: HomeProps) {
   const params = await searchParams;
@@ -40,10 +24,9 @@ export default async function Home({ searchParams }: HomeProps) {
 
   let songs;
   let years;
-  let stats;
 
   try {
-    [years, stats] = await Promise.all([listSongYears(), getPublicSongStats()]);
+    years = await listSongYears();
 
     const latestYear = years[0];
     const selectedYear = yearParam === "all"
@@ -80,6 +63,9 @@ export default async function Home({ searchParams }: HomeProps) {
             </h1>
           </div>
           <div className="flex gap-2">
+            <Link className="pill" href="/stats">
+              Statistics
+            </Link>
             <Link className="pill" href="/admin">
               {authConfigured ? "Admin Panel" : "Admin Setup"}
             </Link>
@@ -155,14 +141,7 @@ export default async function Home({ searchParams }: HomeProps) {
                   <td className="px-5 py-3">{song.rating}/9</td>
                   <td className="px-5 py-3">
                     {song.url ? (
-                      <a
-                        className="text-[var(--accent-strong)] underline-offset-2 hover:underline"
-                        href={song.url}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Open Single Link
-                      </a>
+                      <SongSourceLink href={song.url} compact />
                     ) : (
                       <span className="text-foreground/60">-</span>
                     )}
@@ -172,71 +151,6 @@ export default async function Home({ searchParams }: HomeProps) {
             </tbody>
           </table>
         </div>
-      </section>
-
-      <section className="grid gap-4 lg:grid-cols-3">
-        <article className="card p-5 lg:col-span-1">
-          <p className="text-sm uppercase tracking-[0.2em] text-foreground/60">Score Distribution</p>
-          <p className="mt-2 text-sm text-foreground/75">How the single scores spread across the archive.</p>
-          <div className="mt-4 space-y-3">
-            {stats.scoreDistribution.length > 0 ? (
-              stats.scoreDistribution.map((item) => {
-                const width = stats.totalSongs ? Math.max((item.count / stats.totalSongs) * 100, 4) : 4;
-
-                return (
-                  <div key={item.rating}>
-                    <div className="flex items-center justify-between text-sm">
-                      <span>{item.rating}/9</span>
-                      <span>{item.count}</span>
-                    </div>
-                    <div className="mt-1 h-2 rounded-full bg-foreground/10">
-                      <div
-                        className={`h-2 rounded-full ${getScoreBarClass(item.rating)}`}
-                        style={{ width: `${width}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <p className="text-sm text-foreground/65">No singles yet.</p>
-            )}
-          </div>
-        </article>
-
-        <article className="card p-5 lg:col-span-1">
-          <p className="text-sm uppercase tracking-[0.2em] text-foreground/60">Singles per Year</p>
-          <p className="mt-2 text-sm text-foreground/75">Released singles grouped by Persian year.</p>
-          <ul className="mt-4 space-y-2 text-sm">
-            {stats.releasesByYear.length > 0 ? (
-              stats.releasesByYear.map((item) => (
-                <li key={item.year} className="flex items-center justify-between rounded-lg bg-[var(--surface-strong)] px-3 py-2">
-                  <span>{item.year}</span>
-                  <span>{item.count}</span>
-                </li>
-              ))
-            ) : (
-              <li className="text-foreground/65">No singles yet.</li>
-            )}
-          </ul>
-        </article>
-
-        <article className="card p-5 lg:col-span-1">
-          <p className="text-sm uppercase tracking-[0.2em] text-foreground/60">Top Artists</p>
-          <p className="mt-2 text-sm text-foreground/75">Artists with the most released singles in this archive.</p>
-          <ul className="mt-4 space-y-2 text-sm">
-            {stats.topArtists.length > 0 ? (
-              stats.topArtists.map((item) => (
-                <li key={item.artist} className="flex items-center justify-between rounded-lg bg-[var(--surface-strong)] px-3 py-2">
-                  <span className="truncate pr-3">{item.artist}</span>
-                  <span>{item.count}</span>
-                </li>
-              ))
-            ) : (
-              <li className="text-foreground/65">No artists yet.</li>
-            )}
-          </ul>
-        </article>
       </section>
     </main>
   );

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { DeleteSongButton } from "@/components/delete-song-button";
 import { isMissingDatabaseConfigError } from "@/lib/database-errors";
+import { getRatingRowClass } from "@/lib/song-colors";
 import { listSongYears, listSongs } from "@/lib/songs";
 
 type SongsAdminPageProps = {
@@ -12,15 +13,6 @@ type SongsAdminPageProps = {
     rating?: string;
   }>;
 };
-
-function getRatingRowClass(rating: number) {
-  if (rating >= 9) return "bg-emerald-600/10";
-  if (rating >= 8) return "bg-emerald-500/10";
-  if (rating >= 6) return "bg-sky-500/10";
-  if (rating >= 4) return "bg-amber-500/10";
-  if (rating >= 2) return "bg-orange-500/10";
-  return "bg-rose-500/10";
-}
 
 export default async function SongsAdminPage({ searchParams }: SongsAdminPageProps) {
   const params = await searchParams;

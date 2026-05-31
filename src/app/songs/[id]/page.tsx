@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { isMissingDatabaseConfigError } from "@/lib/database-errors";
 import { getSongById } from "@/lib/songs";
+import { SongSourceLink } from "@/components/song-source-link";
 
 type SongPageProps = {
   params: Promise<{ id: string }>;
@@ -42,9 +43,7 @@ export default async function SongPage({ params }: SongPageProps) {
         <div className="mt-4 grid gap-3 text-base sm:grid-cols-2">
           <p>
             <span className="text-foreground/60">Artist:</span> {song.artist || "-"}
-          </p>
-          <p>
-            <span className="text-foreground/60">Persian Year:</span> {song.persianYear}
+            <SongSourceLink href={song.url} className="button button-primary" />
           </p>
           <p>
             <span className="text-foreground/60">Rating:</span> {song.rating}/9
