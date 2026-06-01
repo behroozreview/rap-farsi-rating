@@ -82,7 +82,7 @@ export async function listSongs(filters: SongFilters = {}) {
     .select()
     .from(songs)
     .where(whereClause)
-    .orderBy(desc(songs.persianYear), desc(songs.rating), asc(songs.title));
+    .orderBy(desc(songs.rating), desc(songs.persianYear), asc(songs.title));
 }
 
 export async function listSongYears() {
