@@ -8,10 +8,17 @@ type PublicSongFiltersProps = {
   years: number[];
   initialQ?: string;
   initialYear: string;
+  defaultYear: string;
   initialRating?: string;
 };
 
-export function PublicSongFilters({ years, initialQ, initialYear, initialRating }: PublicSongFiltersProps) {
+export function PublicSongFilters({
+  years,
+  initialQ,
+  initialYear,
+  defaultYear,
+  initialRating,
+}: PublicSongFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -31,7 +38,9 @@ export function PublicSongFilters({ years, initialQ, initialYear, initialRating 
         params.delete("q");
       }
 
-      if (year && year !== initialYear) {
+      if (year === "all") {
+        params.set("year", "all");
+      } else if (year && year !== defaultYear) {
         params.set("year", year);
       } else {
         params.delete("year");
@@ -55,7 +64,7 @@ export function PublicSongFilters({ years, initialQ, initialYear, initialRating 
     }, 250);
 
     return () => clearTimeout(timeoutId);
-  }, [q, year, rating, searchParams, pathname, router, initialYear]);
+  }, [q, year, rating, searchParams, pathname, router, defaultYear]);
 
   return (
     <form className="mt-5 flex flex-wrap gap-2" action="/" method="get" onSubmit={(event) => event.preventDefault()}>

@@ -48,6 +48,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
   const latestYear = years[0];
   const { value: selectedYearValue } = resolveYearFilter(yearParam, latestYear);
+  const defaultYearValue = latestYear ? String(latestYear) : "all";
 
   return (
     <main className="page-shell flex flex-1 flex-col gap-4 pb-10">
@@ -78,6 +79,7 @@ export default async function Home({ searchParams }: HomeProps) {
           years={years}
           initialQ={q}
           initialYear={selectedYearValue}
+          defaultYear={defaultYearValue}
           initialRating={params.rating}
         />
       </header>
