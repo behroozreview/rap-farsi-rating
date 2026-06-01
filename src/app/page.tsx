@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { PublicSongFilters } from "@/components/public-song-filters";
 import { SongSourceLink } from "@/components/song-source-link";
 import { isAuthConfigured } from "@/lib/auth-config";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
@@ -72,38 +73,12 @@ export default async function Home({ searchParams }: HomeProps) {
             ) : null}
           </div>
         </div>
-        <form className="mt-5 flex flex-wrap gap-2" action="/" method="get">
-          <input
-            className="pill min-w-60"
-            type="search"
-            name="q"
-            placeholder="Search single title or artist"
-            defaultValue={q}
-          />
-          <select className="pill w-40" name="year" defaultValue={selectedYearValue}>
-            <option value="all">All years</option>
-            {years.map((itemYear) => (
-              <option key={itemYear} value={itemYear}>
-                {itemYear}
-              </option>
-            ))}
-          </select>
-          <input
-            className="pill w-28"
-            type="number"
-            min={0}
-            max={9}
-            name="rating"
-            placeholder="Rating"
-            defaultValue={rating}
-          />
-          <button className="button button-primary" type="submit">
-            Apply
-          </button>
-          <Link className="button" href="/">
-            Reset
-          </Link>
-        </form>
+        <PublicSongFilters
+          years={years}
+          initialQ={q}
+          initialYear={selectedYearValue}
+          initialRating={params.rating}
+        />
       </header>
 
       <section className="card overflow-hidden">
