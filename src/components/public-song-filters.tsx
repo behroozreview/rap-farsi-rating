@@ -21,16 +21,6 @@ export function PublicSongFilters({ years, initialQ, initialYear, initialRating 
   const [rating, setRating] = useState(initialRating ?? "");
 
   useEffect(() => {
-    const nextQ = searchParams.get("q") ?? "";
-    const nextYear = searchParams.get("year") ?? initialYear;
-    const nextRating = searchParams.get("rating") ?? "";
-
-    setQ((prev) => (prev === nextQ ? prev : nextQ));
-    setYear((prev) => (prev === nextYear ? prev : nextYear));
-    setRating((prev) => (prev === nextRating ? prev : nextRating));
-  }, [searchParams, initialYear]);
-
-  useEffect(() => {
     const timeoutId = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
 
@@ -55,6 +45,11 @@ export function PublicSongFilters({ years, initialQ, initialYear, initialRating 
       }
 
       const query = params.toString();
+      const currentQuery = searchParams.toString();
+      if (query === currentQuery) {
+        return;
+      }
+
       const nextUrl = query ? `${pathname}?${query}` : pathname;
       router.replace(nextUrl, { scroll: false });
     }, 250);
