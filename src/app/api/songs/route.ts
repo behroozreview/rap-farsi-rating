@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   const yearRaw = searchParams.get("year");
   const ratingRaw = searchParams.get("rating");
 
-  const year = yearRaw ? Number(yearRaw) : undefined;
+  const year = yearRaw === "all" ? undefined : yearRaw ? Number(yearRaw) : undefined;
   const rating = ratingRaw ? Number(ratingRaw) : undefined;
 
   const songs = await listSongs({ q, year, rating });

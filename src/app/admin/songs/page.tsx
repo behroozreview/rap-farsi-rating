@@ -4,7 +4,7 @@ import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { DeleteSongButton } from "@/components/delete-song-button";
 import { isMissingDatabaseConfigError } from "@/lib/database-errors";
 import { getRatingRowClass } from "@/lib/song-colors";
-import { listSongYears, listSongs } from "@/lib/songs";
+import { listSongYears, listSongs, resolveYearFilter } from "@/lib/songs";
 
 type SongsAdminPageProps = {
   searchParams: Promise<{
@@ -24,11 +24,7 @@ export default async function SongsAdminPage({ searchParams }: SongsAdminPagePro
     years = await listSongYears();
 
     const latestYear = years[0];
-    const selectedYear = yearParam === "all"
-      ? undefined
-      : yearParam
-        ? Number(yearParam)
-        : latestYear;
+    const { year: selectedYear } = resolveYearFilter(yearParam, latestYear);
 
     songs = await listSongs({
       q: params.q,
@@ -49,7 +45,7 @@ export default async function SongsAdminPage({ searchParams }: SongsAdminPagePro
   }
 
   const latestYear = years[0];
-  const selectedYearValue = yearParam ?? (latestYear ? String(latestYear) : "all");
+  const { value: selectedYearValue } = resolveYearFilter(yearParam, latestYear);
 
   return (
     <section className="card p-5">

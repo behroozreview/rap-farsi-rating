@@ -2,14 +2,30 @@ import Link from "next/link";
 
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { isMissingDatabaseConfigError } from "@/lib/database-errors";
-import { getPublicSongStats } from "@/lib/songs";
-import { getScoreBarClass } from "@/lib/song-colors";
+import { getPublicSongStats, listSongYears, resolveYearFilter } from "@/lib/songs";
+import { getPublicRatingClass, getPublicScoreBarClass } from "@/lib/song-colors";
 
-export default async function StatsPage() {
+type StatsPageProps = {
+  searchParams: Promise<{
+    year?: string;
+  }>;
+};
+
+export default async function StatsPage({ searchParams }: StatsPageProps) {
+  const params = await searchParams;
+  const yearParam = params.year?.trim();
+
   let stats;
+  let years;
+  let selectedYearValue = "all";
 
   try {
-    stats = await getPublicSongStats();
+    years = await listSongYears();
+    const latestYear = years[0];
+    const { year: selectedYear, value } = resolveYearFilter(yearParam, latestYear);
+    selectedYearValue = value;
+
+    stats = await getPublicSongStats(selectedYear);
   } catch (error) {
     if (isMissingDatabaseConfigError(error)) {
       return (
@@ -36,7 +52,20 @@ export default async function StatsPage() {
               A summary of score distribution, yearly releases, and the most active artists.
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <form className="flex items-center gap-2" action="/stats" method="get">
+              <select className="pill w-40" name="year" defaultValue={selectedYearValue}>
+                <option value="all">All years</option>
+                {years.map((itemYear) => (
+                  <option key={itemYear} value={itemYear}>
+                    {itemYear}
+                  </option>
+                ))}
+              </select>
+              <button className="button button-primary" type="submit">
+                Apply
+              </button>
+            </form>
             <Link className="pill" href="/">
               Back to Singles
             </Link>
@@ -57,14 +86,14 @@ export default async function StatsPage() {
                 const width = stats.totalSongs ? Math.max((item.count / stats.totalSongs) * 100, 4) : 4;
 
                 return (
-                  <div key={item.rating}>
+                  <div key={item.rating} className={`rounded-xl border border-foreground/10 p-2 ${getPublicRatingClass(item.rating)}`}>
                     <div className="flex items-center justify-between text-sm">
                       <span>{item.rating}/9</span>
                       <span>{item.count}</span>
                     </div>
                     <div className="mt-1 h-2 rounded-full bg-foreground/10">
                       <div
-                        className={`h-2 rounded-full ${getScoreBarClass(item.rating)}`}
+                        className={`h-2 rounded-full ${getPublicScoreBarClass(item.rating)}`}
                         style={{ width: `${width}%` }}
                       />
                     </div>

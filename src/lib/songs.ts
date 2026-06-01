@@ -25,6 +25,36 @@ export type ArtistReleaseItem = {
   count: number;
 };
 
+export function resolveYearFilter(yearParam?: string, latestYear?: number) {
+  if (!yearParam) {
+    return {
+      year: latestYear,
+      value: latestYear ? String(latestYear) : "all",
+    };
+  }
+
+  if (yearParam === "all") {
+    return {
+      year: undefined,
+      value: "all",
+    };
+  }
+
+  const parsedYear = Number(yearParam);
+
+  if (Number.isFinite(parsedYear)) {
+    return {
+      year: parsedYear,
+      value: String(parsedYear),
+    };
+  }
+
+  return {
+    year: latestYear,
+    value: latestYear ? String(latestYear) : "all",
+  };
+}
+
 export type PublicSongStats = {
   totalSongs: number;
   scoreDistribution: ScoreDistributionItem[];
@@ -39,10 +69,10 @@ export async function listSongs(filters: SongFilters = {}) {
   if (filters.q) {
     predicates.push(or(ilike(songs.title, `%${filters.q}%`), ilike(songs.artist, `%${filters.q}%`)));
   }
-  if (filters.year) {
+  if (filters.year !== undefined) {
     predicates.push(eq(songs.persianYear, filters.year));
   }
-  if (filters.rating) {
+  if (filters.rating !== undefined) {
     predicates.push(eq(songs.rating, filters.rating));
   }
 
@@ -145,25 +175,30 @@ export async function getSongStats() {
   };
 }
 
-export async function getPublicSongStats(): Promise<PublicSongStats> {
+export async function getPublicSongStats(year?: number): Promise<PublicSongStats> {
   const db = getDb();
 
+  const yearFilter = year !== undefined ? eq(songs.persianYear, year) : undefined;
+  const artistFilter = yearFilter ? and(yearFilter, ne(songs.artist, "")) : ne(songs.artist, "");
+
   const [totalRow, scoreDistribution, releasesByYear, topArtists] = await Promise.all([
-    db.select({ value: count() }).from(songs),
+    db.select({ value: count() }).from(songs).where(yearFilter),
     db
       .select({ rating: songs.rating, count: count() })
       .from(songs)
+      .where(yearFilter)
       .groupBy(songs.rating)
       .orderBy(asc(songs.rating)),
     db
       .select({ year: songs.persianYear, count: count() })
       .from(songs)
+      .where(yearFilter)
       .groupBy(songs.persianYear)
       .orderBy(desc(songs.persianYear)),
     db
       .select({ artist: songs.artist, count: count() })
       .from(songs)
-      .where(ne(songs.artist, ""))
+      .where(artistFilter)
       .groupBy(songs.artist)
       .orderBy(desc(count()), asc(songs.artist))
       .limit(10),

@@ -4,8 +4,8 @@ import { SongSourceLink } from "@/components/song-source-link";
 import { isAuthConfigured } from "@/lib/auth-config";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { isMissingDatabaseConfigError } from "@/lib/database-errors";
-import { listSongYears, listSongs } from "@/lib/songs";
-import { getRatingRowClass } from "@/lib/song-colors";
+import { listSongYears, listSongs, resolveYearFilter } from "@/lib/songs";
+import { getPublicRatingClass } from "@/lib/song-colors";
 
 type HomeProps = {
   searchParams: Promise<{
@@ -29,11 +29,7 @@ export default async function Home({ searchParams }: HomeProps) {
     years = await listSongYears();
 
     const latestYear = years[0];
-    const selectedYear = yearParam === "all"
-      ? undefined
-      : yearParam
-        ? Number(yearParam)
-        : latestYear;
+    const { year: selectedYear } = resolveYearFilter(yearParam, latestYear);
 
     songs = await listSongs({ q, year: selectedYear, rating });
   } catch (error) {
@@ -50,7 +46,7 @@ export default async function Home({ searchParams }: HomeProps) {
   }
 
   const latestYear = years[0];
-  const selectedYearValue = yearParam ?? (latestYear ? String(latestYear) : "all");
+  const { value: selectedYearValue } = resolveYearFilter(yearParam, latestYear);
 
   return (
     <main className="page-shell flex flex-1 flex-col gap-4 pb-10">
@@ -129,7 +125,7 @@ export default async function Home({ searchParams }: HomeProps) {
               {songs.map((song) => (
                 <tr
                   key={song.id}
-                  className={`${getRatingRowClass(song.rating)} border-b border-foreground/10 last:border-b-0`}
+                  className={`${getPublicRatingClass(song.rating)} border-b border-foreground/10 last:border-b-0`}
                 >
                   <td className="px-5 py-3">
                     <Link href={`/songs/${song.id}`} className="font-semibold hover:underline">
