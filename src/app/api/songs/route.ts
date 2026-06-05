@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireAdminApi } from "@/lib/admin-guard";
-import { createSong, listSongs } from "@/lib/songs";
+import { countSongs, createSong, listSongs, SONGS_PAGE_SIZE } from "@/lib/songs";
 import { songSchema } from "@/lib/validation/song";
 
 export async function GET(request: NextRequest) {
@@ -10,12 +10,21 @@ export async function GET(request: NextRequest) {
   const q = searchParams.get("q") ?? undefined;
   const yearRaw = searchParams.get("year");
   const ratingRaw = searchParams.get("rating");
+  const offsetRaw = searchParams.get("offset");
+  const limitRaw = searchParams.get("limit");
 
   const year = yearRaw === "all" ? undefined : yearRaw ? Number(yearRaw) : undefined;
   const rating = ratingRaw ? Number(ratingRaw) : undefined;
+  const offset = offsetRaw ? Number(offsetRaw) : 0;
+  const limit = limitRaw ? Number(limitRaw) : SONGS_PAGE_SIZE;
 
-  const songs = await listSongs({ q, year, rating });
-  return NextResponse.json({ songs });
+  const filters = { q, year, rating };
+  const [songs, total] = await Promise.all([
+    listSongs({ ...filters, limit, offset }),
+    countSongs(filters),
+  ]);
+
+  return NextResponse.json({ songs, total, hasMore: offset + songs.length < total });
 }
 
 export async function POST(request: NextRequest) {

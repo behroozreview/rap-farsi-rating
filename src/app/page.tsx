@@ -1,12 +1,10 @@
 import Link from "next/link";
 
 import { PublicSongFilters } from "@/components/public-song-filters";
-import { PublicSongTable } from "@/components/public-song-table";
-import { SongSourceLink } from "@/components/song-source-link";
+import { SongListInfinite } from "@/components/song-list-infinite";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { isMissingDatabaseConfigError } from "@/lib/database-errors";
-import { listSongYears, listSongs, resolveYearFilter } from "@/lib/songs";
-import { getPublicRatingClass } from "@/lib/song-colors";
+import { countSongs, listSongYears, listSongs, resolveYearFilter, SONGS_PAGE_SIZE } from "@/lib/songs";
 
 type HomeProps = {
   searchParams: Promise<{
@@ -31,7 +29,7 @@ export default async function Home({ searchParams }: HomeProps) {
     const latestYear = years[0];
     const { year: selectedYear } = resolveYearFilter(yearParam, latestYear);
 
-    songs = await listSongs({ q, year: selectedYear, rating });
+    songs = await listSongs({ q, year: selectedYear, rating, limit: SONGS_PAGE_SIZE, offset: 0 });
   } catch (error) {
     if (isMissingDatabaseConfigError(error)) {
       return (
@@ -48,6 +46,7 @@ export default async function Home({ searchParams }: HomeProps) {
   const latestYear = years[0];
   const { value: selectedYearValue } = resolveYearFilter(yearParam, latestYear);
   const defaultYearValue = latestYear ? String(latestYear) : "all";
+  const total = await countSongs({ q, year: resolveYearFilter(yearParam, latestYear).year, rating });
   const averageRating = songs.length
     ? (songs.reduce((sum, song) => sum + song.rating, 0) / songs.length).toFixed(1)
     : "-";
@@ -125,37 +124,20 @@ export default async function Home({ searchParams }: HomeProps) {
           <div>
             <p className="text-[0.68rem] uppercase tracking-[0.3em] text-foreground/55">Archive</p>
             <p className="mt-1 text-2xl leading-none" style={{ fontFamily: "var(--font-title)" }}>
-              {songs.length} singles in view
+              {total} singles in view
             </p>
           </div>
           <p className="text-xs uppercase tracking-[0.2em] text-foreground/55">Sorted by latest year</p>
         </div>
 
-        <div className="md:hidden">
-          <ul className="divide-y divide-foreground/10">
-            {songs.map((song) => (
-              <li key={song.id} className={`${getPublicRatingClass(song.rating)} p-4`}>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <Link href={`/songs/${song.id}`} className="text-xl leading-snug hover:underline" style={{ fontFamily: "var(--font-title)" }}>
-                      {song.title}
-                    </Link>
-                    <p className="text-sm text-foreground/75">{song.artist || "Unknown artist"}</p>
-                  </div>
-                  <span className="rounded-sm border border-foreground/15 bg-white/65 px-2 py-0.5 text-xs font-semibold">
-                    {song.rating}/9
-                  </span>
-                </div>
-                <div className="mt-2 flex items-center justify-between text-sm text-foreground/75">
-                  <span>{song.persianYear}</span>
-                  {song.url ? <SongSourceLink href={song.url} compact /> : <span>-</span>}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <PublicSongTable songs={songs} />
+        <SongListInfinite
+          key={`${q ?? ""}|${selectedYearValue}|${params.rating ?? ""}`}
+          initialSongs={songs}
+          total={total}
+          q={q}
+          year={selectedYearValue}
+          rating={params.rating}
+        />
       </section>
     </main>
   );

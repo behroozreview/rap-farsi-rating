@@ -4,10 +4,14 @@ import { getDb } from "@/db";
 import { songs } from "@/db/schema";
 import type { SongInput, SongPatchInput } from "@/lib/validation/song";
 
+export const SONGS_PAGE_SIZE = 30;
+
 export type SongFilters = {
   q?: string;
   year?: number;
   rating?: number;
+  limit?: number;
+  offset?: number;
 };
 
 export type ScoreDistributionItem = {
@@ -78,11 +82,41 @@ export async function listSongs(filters: SongFilters = {}) {
 
   const whereClause = predicates.length > 0 ? and(...predicates) : undefined;
 
-  return db
+  let query = db
     .select()
     .from(songs)
     .where(whereClause)
-    .orderBy(desc(songs.rating), desc(songs.persianYear), asc(songs.title));
+    .orderBy(desc(songs.rating), desc(songs.persianYear), asc(songs.title))
+    .$dynamic();
+
+  if (filters.limit !== undefined) {
+    query = query.limit(filters.limit);
+  }
+
+  if (filters.offset !== undefined) {
+    query = query.offset(filters.offset);
+  }
+
+  return query;
+}
+
+export async function countSongs(filters: Omit<SongFilters, "limit" | "offset"> = {}) {
+  const db = getDb();
+
+  const predicates = [];
+  if (filters.q) {
+    predicates.push(or(ilike(songs.title, `%${filters.q}%`), ilike(songs.artist, `%${filters.q}%`)));
+  }
+  if (filters.year !== undefined) {
+    predicates.push(eq(songs.persianYear, filters.year));
+  }
+  if (filters.rating !== undefined) {
+    predicates.push(lte(songs.rating, filters.rating));
+  }
+
+  const whereClause = predicates.length > 0 ? and(...predicates) : undefined;
+  const [row] = await db.select({ value: count() }).from(songs).where(whereClause);
+  return row?.value ?? 0;
 }
 
 export async function listSongYears() {
