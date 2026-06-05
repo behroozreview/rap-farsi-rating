@@ -119,6 +119,38 @@ export async function countSongs(filters: Omit<SongFilters, "limit" | "offset"> 
   return row?.value ?? 0;
 }
 
+export async function getHomepageStats(filters: Omit<SongFilters, "limit" | "offset"> = {}) {
+  const db = getDb();
+
+  const predicates = [];
+  if (filters.q) {
+    predicates.push(or(ilike(songs.title, `%${filters.q}%`), ilike(songs.artist, `%${filters.q}%`)));
+  }
+  if (filters.year !== undefined) {
+    predicates.push(eq(songs.persianYear, filters.year));
+  }
+  if (filters.rating !== undefined) {
+    predicates.push(lte(songs.rating, filters.rating));
+  }
+
+  const whereClause = predicates.length > 0 ? and(...predicates) : undefined;
+
+  const [row] = await db
+    .select({
+      total: count(),
+      avgRating: sql<string>`round(avg(${songs.rating})::numeric, 1)`,
+      highRatedCount: sql<number>`count(*) filter (where ${songs.rating} >= 7)`,
+    })
+    .from(songs)
+    .where(whereClause);
+
+  return {
+    total: row?.total ?? 0,
+    averageRating: row?.total ? row.avgRating : null,
+    highRatedCount: Number(row?.highRatedCount ?? 0),
+  };
+}
+
 export async function listSongYears() {
   const db = getDb();
 

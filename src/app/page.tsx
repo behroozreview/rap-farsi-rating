@@ -4,7 +4,7 @@ import { PublicSongFilters } from "@/components/public-song-filters";
 import { SongListInfinite } from "@/components/song-list-infinite";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { isMissingDatabaseConfigError } from "@/lib/database-errors";
-import { countSongs, listSongYears, listSongs, resolveYearFilter, SONGS_PAGE_SIZE } from "@/lib/songs";
+import { getHomepageStats, listSongYears, listSongs, resolveYearFilter, SONGS_PAGE_SIZE } from "@/lib/songs";
 
 type HomeProps = {
   searchParams: Promise<{
@@ -25,11 +25,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
   try {
     years = await listSongYears();
-
-    const latestYear = years[0];
-    const { year: selectedYear } = resolveYearFilter(yearParam, latestYear);
-
-    songs = await listSongs({ q, year: selectedYear, rating, limit: SONGS_PAGE_SIZE, offset: 0 });
+    songs = await listSongs({ q, year: resolveYearFilter(yearParam, years[0]).year, rating, limit: SONGS_PAGE_SIZE, offset: 0 });
   } catch (error) {
     if (isMissingDatabaseConfigError(error)) {
       return (
@@ -44,13 +40,9 @@ export default async function Home({ searchParams }: HomeProps) {
   }
 
   const latestYear = years[0];
-  const { value: selectedYearValue } = resolveYearFilter(yearParam, latestYear);
+  const { value: selectedYearValue, year: selectedYear } = resolveYearFilter(yearParam, latestYear);
   const defaultYearValue = latestYear ? String(latestYear) : "all";
-  const total = await countSongs({ q, year: resolveYearFilter(yearParam, latestYear).year, rating });
-  const averageRating = songs.length
-    ? (songs.reduce((sum, song) => sum + song.rating, 0) / songs.length).toFixed(1)
-    : "-";
-  const highRatedCount = songs.filter((song) => song.rating >= 7).length;
+  const { total, averageRating, highRatedCount } = await getHomepageStats({ q, year: selectedYear, rating });
 
   return (
     <main className="page-shell flex flex-1 flex-col gap-6 pb-12">
