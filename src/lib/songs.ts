@@ -4,7 +4,7 @@ import { getDb } from "@/db";
 import { songs } from "@/db/schema";
 import type { SongInput, SongPatchInput } from "@/lib/validation/song";
 
-export const SONGS_PAGE_SIZE = 30;
+export { SONGS_PAGE_SIZE } from "@/lib/constants";
 
 export type SongFilters = {
   q?: string;

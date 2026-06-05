@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { getPublicRatingClass } from "@/lib/song-colors";
-import { SONGS_PAGE_SIZE } from "@/lib/songs";
+import { SONGS_PAGE_SIZE } from "@/lib/constants";
 import { SongSourceLink } from "@/components/song-source-link";
 import { PublicSongTable } from "@/components/public-song-table";
 
