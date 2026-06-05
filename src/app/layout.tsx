@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Vazirmatn } from "next/font/google";
+import { Anton, Vazirmatn } from "next/font/google";
 import "./globals.css";
 
-const titleFont = Cormorant_Garamond({
+const titleFont = Anton({
   variable: "--font-title",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400"],
 });
 
 const bodyFont = Vazirmatn({
