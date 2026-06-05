@@ -34,39 +34,55 @@ export default async function SongPage({ params }: SongPageProps) {
   }
 
   return (
-    <main className="page-shell">
-      <article className="card p-6">
-        <p className="text-sm uppercase tracking-[0.2em] text-foreground/65">Single Detail</p>
-        <h1 className="mt-2 text-4xl font-semibold" style={{ fontFamily: "var(--font-title)" }}>
-          {song.title}
-        </h1>
-        <div className="mt-4 grid gap-3 text-base sm:grid-cols-2">
-          <p>
-            <span className="text-foreground/60">Artist:</span> {song.artist || "-"}
-            <SongSourceLink href={song.url} className="button button-primary" />
-          </p>
-          <p>
-            <span className="text-foreground/60">Rating:</span> {song.rating}/9
-          </p>
-          <p>
-            <span className="text-foreground/60">Added:</span>{" "}
-            {new Date(song.createdAt).toLocaleDateString()}
-          </p>
+    <main className="page-shell pb-12">
+      <article className="card overflow-hidden p-6 sm:p-8 lg:p-10">
+        <div className="border-b border-foreground/12 pb-6">
+          <p className="text-[0.68rem] uppercase tracking-[0.32em] text-foreground/58">Single detail</p>
+          <h1 className="mt-3 text-5xl leading-none sm:text-6xl lg:text-7xl" style={{ fontFamily: "var(--font-title)" }}>
+            {song.title}
+          </h1>
         </div>
 
-        {song.notes ? (
-          <p className="mt-4 rounded-lg bg-[var(--surface-strong)] p-3 text-sm leading-6">{song.notes}</p>
-        ) : null}
+        <div className="grid gap-8 pt-6 lg:grid-cols-[1.4fr_0.95fr] lg:gap-10">
+          <section>
+            <dl className="grid gap-5 sm:grid-cols-2">
+              <div className="border-b border-foreground/10 pb-3">
+                <dt className="text-[0.68rem] uppercase tracking-[0.24em] text-foreground/55">Artist</dt>
+                <dd className="mt-2 text-2xl leading-none" style={{ fontFamily: "var(--font-title)" }}>{song.artist || "-"}</dd>
+              </div>
+              <div className="border-b border-foreground/10 pb-3">
+                <dt className="text-[0.68rem] uppercase tracking-[0.24em] text-foreground/55">Rating</dt>
+                <dd className="mt-2 text-2xl leading-none" style={{ fontFamily: "var(--font-title)" }}>{song.rating}/9</dd>
+              </div>
+              <div className="border-b border-foreground/10 pb-3">
+                <dt className="text-[0.68rem] uppercase tracking-[0.24em] text-foreground/55">Year</dt>
+                <dd className="mt-2 text-2xl leading-none" style={{ fontFamily: "var(--font-title)" }}>{song.persianYear}</dd>
+              </div>
+              <div className="border-b border-foreground/10 pb-3">
+                <dt className="text-[0.68rem] uppercase tracking-[0.24em] text-foreground/55">Added</dt>
+                <dd className="mt-2 text-lg text-foreground/82">{new Date(song.createdAt).toLocaleDateString()}</dd>
+              </div>
+            </dl>
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          {song.url ? (
-            <a className="button button-primary" href={song.url} target="_blank" rel="noreferrer">
-              Open Single Link
-            </a>
-          ) : null}
-          <Link className="button pill" href="/">
-            Back to Singles
-          </Link>
+            {song.notes ? (
+              <div className="mt-8 border-l-2 border-foreground/15 pl-4">
+                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-foreground/55">Notes</p>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-foreground/82 sm:text-base">{song.notes}</p>
+              </div>
+            ) : null}
+          </section>
+
+          <aside className="flex flex-col gap-3 border-t border-foreground/12 pt-6 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
+            {song.url ? <SongSourceLink href={song.url} className="button button-primary" /> : null}
+            {song.url ? (
+              <a className="button" href={song.url} target="_blank" rel="noreferrer">
+                Open single link
+              </a>
+            ) : null}
+            <Link className="button" href="/">
+              Back to singles
+            </Link>
+          </aside>
         </div>
       </article>
     </main>

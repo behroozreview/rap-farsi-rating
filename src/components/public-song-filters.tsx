@@ -67,8 +67,8 @@ export function PublicSongFilters({
   }, [q, year, rating, searchParams, pathname, router, defaultYear]);
 
   return (
-    <form className="mt-6 grid gap-3 md:grid-cols-[1.8fr_0.8fr_0.8fr_auto]" action="/" method="get" onSubmit={(event) => event.preventDefault()}>
-      <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground/80">
+    <form className="mt-8 grid gap-3 border-t border-foreground/12 pt-6 md:grid-cols-[1.8fr_0.8fr_0.8fr_auto]" action="/" method="get" onSubmit={(event) => event.preventDefault()}>
+      <label className="flex flex-col gap-1.5 text-[0.8rem] font-medium uppercase tracking-[0.18em] text-foreground/72">
         Search
         <input
           className="pill min-w-0"
@@ -80,7 +80,7 @@ export function PublicSongFilters({
         />
       </label>
 
-      <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground/80">
+      <label className="flex flex-col gap-1.5 text-[0.8rem] font-medium uppercase tracking-[0.18em] text-foreground/72">
         Year
         <select className="pill" name="year" value={year} onChange={(event) => setYear(event.target.value)}>
           <option value="all">All years</option>
@@ -92,7 +92,7 @@ export function PublicSongFilters({
         </select>
       </label>
 
-      <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground/80">
+      <label className="flex flex-col gap-1.5 text-[0.8rem] font-medium uppercase tracking-[0.18em] text-foreground/72">
         Min rating
         <select className="pill" name="rating" value={rating} onChange={(event) => setRating(event.target.value)}>
           <option value="">Any</option>
@@ -110,7 +110,7 @@ export function PublicSongFilters({
         </Link>
       </div>
 
-      <p className="text-xs text-foreground/65 md:col-span-4">Filters update automatically as you type and select.</p>
+      <p className="text-xs uppercase tracking-[0.18em] text-foreground/55 md:col-span-4">Filters update automatically as you type and select.</p>
     </form>
   );
 }

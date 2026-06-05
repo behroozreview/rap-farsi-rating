@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f5efe4;
-  --foreground: #12202a;
-  --surface: #fffaf0;
-  --surface-strong: #efe2c9;
-  --surface-muted: #f6edda;
-  --accent: #0f7a71;
-  --accent-strong: #095b53;
-  --accent-soft: #daf3ef;
+  --background: #f3ecdf;
+  --foreground: #18120e;
+  --surface: #faf5ee;
+  --surface-strong: #e7ddd0;
+  --surface-muted: #f0e7db;
+  --accent: #7b2d22;
+  --accent-strong: #4c1913;
+  --accent-soft: #ead8d1;
   --danger: #9b2f2f;
   --ring: color-mix(in oklab, var(--accent) 55%, white 45%);
 }
@@ -22,13 +22,22 @@
 
 body {
   background:
-    radial-gradient(circle at 12% 12%, #f8dca2 0%, transparent 38%),
-    radial-gradient(circle at 86% 18%, #d2efe7 0%, transparent 33%),
-    radial-gradient(circle at 50% 100%, #f3e3bf 0%, transparent 42%),
+    linear-gradient(180deg, rgba(255, 251, 245, 0.88) 0%, rgba(243, 236, 223, 0.96) 36%, rgba(238, 230, 218, 1) 100%),
     var(--background);
   color: var(--foreground);
   font-family: var(--font-body), sans-serif;
   min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to right, transparent 0, transparent calc(50% - 1px), rgba(24, 18, 14, 0.05) calc(50% - 1px), rgba(24, 18, 14, 0.05) calc(50% + 1px), transparent calc(50% + 1px)),
+    repeating-linear-gradient(to bottom, transparent 0 27px, rgba(24, 18, 14, 0.02) 27px 28px);
+  opacity: 0.35;
 }
 
 a {
@@ -37,22 +46,24 @@ a {
 }
 
 .page-shell {
-  width: min(1140px, 100% - 2rem);
-  margin: 1.6rem auto;
+  width: min(1180px, 100% - 2rem);
+  margin: 2rem auto;
+  position: relative;
+  z-index: 1;
 }
 
 .card {
-  border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--foreground) 14%, transparent);
   background: var(--surface);
-  border-radius: 1.1rem;
-  box-shadow: 0 22px 45px -34px rgba(7, 28, 24, 0.5), 0 12px 22px -22px rgba(8, 26, 41, 0.44);
+  border-radius: 0.45rem;
+  box-shadow: 0 16px 30px -28px rgba(24, 18, 14, 0.28);
 }
 
 .pill {
   border: 1px solid color-mix(in oklab, var(--foreground) 18%, transparent);
-  border-radius: 999px;
-  padding: 0.55rem 0.95rem;
-  background: color-mix(in oklab, var(--surface) 75%, white 25%);
+  border-radius: 0.35rem;
+  padding: 0.65rem 0.95rem;
+  background: color-mix(in oklab, var(--surface) 90%, white 10%);
   color: var(--foreground);
   transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
 }
@@ -61,7 +72,7 @@ input.pill,
 select.pill,
 textarea.pill {
   width: 100%;
-  border-radius: 0.9rem;
+  border-radius: 0.35rem;
 }
 
 input.pill:focus,
@@ -77,11 +88,11 @@ textarea.pill:focus {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  border-radius: 0.75rem;
-  padding: 0.64rem 1rem;
+  border-radius: 0.35rem;
+  padding: 0.72rem 1rem;
   font-weight: 600;
   border: 1px solid color-mix(in oklab, var(--foreground) 14%, transparent);
-  background: color-mix(in oklab, var(--surface-muted) 82%, white 18%);
+  background: color-mix(in oklab, var(--surface-muted) 90%, white 10%);
   color: var(--foreground);
   cursor: pointer;
   transition: transform 120ms ease, background-color 120ms ease, border-color 120ms ease;
@@ -93,13 +104,13 @@ textarea.pill:focus {
 }
 
 .button-primary {
-  border-color: transparent;
-  background: linear-gradient(135deg, var(--accent) 0%, color-mix(in oklab, var(--accent) 68%, #8fd6cb 32%) 100%);
-  color: #f2fffd;
+  border-color: color-mix(in oklab, var(--foreground) 22%, transparent);
+  background: var(--foreground);
+  color: #f7f2ea;
 }
 
 .button-primary:hover {
-  background: linear-gradient(135deg, var(--accent-strong) 0%, var(--accent) 100%);
+  background: color-mix(in oklab, var(--foreground) 88%, var(--accent) 12%);
 }
 
 .button-danger {
@@ -117,6 +128,6 @@ textarea.pill:focus {
 
 .soft-panel {
   border: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent);
-  border-radius: 1rem;
-  background: color-mix(in oklab, var(--surface) 90%, white 10%);
+  border-radius: 0.35rem;
+  background: color-mix(in oklab, var(--surface) 92%, white 8%);
 }

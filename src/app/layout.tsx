@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Vazirmatn } from "next/font/google";
+import { Cormorant_Garamond, Vazirmatn } from "next/font/google";
 import "./globals.css";
 
-const titleFont = Space_Grotesk({
+const titleFont = Cormorant_Garamond({
   variable: "--font-title",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const bodyFont = Vazirmatn({
