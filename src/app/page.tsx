@@ -61,9 +61,6 @@ export default async function Home({ searchParams }: HomeProps) {
           <div className="space-y-5">
             <p className="text-[0.68rem] uppercase tracking-[0.34em] text-foreground/58">Behroozreview single song rating</p>
             <div className="max-w-4xl space-y-4">
-              <h1 className="text-5xl leading-none sm:text-7xl lg:text-[5.5rem]" style={{ fontFamily: "var(--font-title)" }}>
-                A living archive of singles, scores, and listening notes.
-              </h1>
               <p className="max-w-2xl text-sm leading-7 text-foreground/78 sm:text-base">
                 Behroozreview tracks individual RapFarsi songs through rating, year, and source context with a cleaner editorial lens.
               </p>
