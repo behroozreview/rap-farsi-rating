@@ -61,8 +61,8 @@ export default async function Home({ searchParams }: HomeProps) {
 
             <div className="grid gap-2 border-t border-foreground/12 pt-5 sm:max-w-3xl sm:grid-cols-4">
               <div>
-                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-foreground/55">Shown</p>
-                <p className="mt-1 text-3xl leading-none" style={{ fontFamily: "var(--font-title)" }}>{songs.length}</p>
+                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-foreground/55">Total</p>
+                <p className="mt-1 text-3xl leading-none" style={{ fontFamily: "var(--font-title)" }}>{total}</p>
               </div>
               <div>
                 <p className="text-[0.68rem] uppercase tracking-[0.24em] text-foreground/55">Average</p>
