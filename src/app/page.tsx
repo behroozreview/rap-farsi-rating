@@ -59,13 +59,30 @@ export default async function Home({ searchParams }: HomeProps) {
       <header className="card p-6 sm:p-7">
         <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr] lg:items-start">
           <div className="space-y-3">
-            <p className="text-xs uppercase tracking-[0.28em] text-foreground/60">RapFarsi Singles Archive</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-foreground/60">Behroozreview single song rating</p>
             <h1 className="text-3xl font-semibold leading-tight sm:text-5xl" style={{ fontFamily: "var(--font-title)" }}>
-              Browse and rate singles with context, not clutter
+              Behroozreview single song rating
             </h1>
-            <p className="max-w-2xl text-sm text-foreground/75 sm:text-base">
-              A personal archive of RapFarsi tracks with searchable ratings, source links, and year-based filtering.
-            </p>
+            <div className="max-w-2xl space-y-1 text-sm text-foreground/80 sm:text-base">
+              <p>
+                Twitter:{" "}
+                <a className="underline decoration-foreground/35 underline-offset-4 hover:decoration-foreground/75" href="https://x.com/behroozreview" target="_blank" rel="noreferrer">
+                  https://x.com/behroozreview
+                </a>
+              </p>
+              <p>
+                Articles:{" "}
+                <a className="underline decoration-foreground/35 underline-offset-4 hover:decoration-foreground/75" href="https://behroozqa.wordpress.com/" target="_blank" rel="noreferrer">
+                  https://behroozqa.wordpress.com/
+                </a>
+              </p>
+              <p>
+                Podcast:{" "}
+                <a className="underline decoration-foreground/35 underline-offset-4 hover:decoration-foreground/75" href="https://soundcloud.com/davandeh" target="_blank" rel="noreferrer">
+                  https://soundcloud.com/davandeh
+                </a>
+              </p>
+            </div>
 
             <div className="grid grid-cols-2 gap-2 pt-2 sm:max-w-xl sm:grid-cols-4">
               <div className="soft-panel p-3">
