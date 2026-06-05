@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { SectionHeading } from "@/components/section-heading";
+
 type PreviewError = {
   row: number;
   error: string;
@@ -85,20 +87,32 @@ export function CsvImportClient() {
   }
 
   return (
-    <section className="card p-5">
-      <form className="flex flex-wrap gap-3" onSubmit={onPreview}>
-        <input className="pill" type="file" name="file" accept=".csv,text/csv" required />
-        <button className="button button-primary" type="submit" disabled={loading}>
-          {loading ? "Processing..." : "Preview CSV"}
-        </button>
+    <section className="card p-5 sm:p-6">
+      <SectionHeading
+        title="CSV import"
+        description="Upload a CSV, review validation results, then import only valid rows."
+      />
+
+      <form className="soft-panel mt-4 grid gap-3 p-3 md:grid-cols-[1.6fr_auto]" onSubmit={onPreview}>
+        <label className="text-sm font-medium text-foreground/82">
+          CSV file
+          <input className="pill mt-1" type="file" name="file" accept=".csv,text/csv" required />
+        </label>
+        <div className="flex items-end">
+          <button className="button button-primary w-full md:w-auto" type="submit" disabled={loading}>
+            {loading ? "Processing..." : "Preview CSV"}
+          </button>
+        </div>
       </form>
 
-      {status ? <p className="mt-3 text-sm text-foreground/80">{status}</p> : null}
+      {status ? <p className="mt-3 rounded-lg bg-[var(--surface-muted)] px-3 py-2 text-sm text-foreground/82">{status}</p> : null}
 
       {preview ? (
         <div className="mt-4 space-y-4">
-          <div className="rounded-lg bg-[var(--surface-strong)] p-3 text-sm">
-            Total rows: {preview.totalRows}, Valid: {preview.validCount}, Errors: {preview.errorCount}
+          <div className="grid gap-2 text-sm sm:grid-cols-3">
+            <div className="soft-panel px-3 py-2">Total rows: {preview.totalRows}</div>
+            <div className="soft-panel px-3 py-2">Valid rows: {preview.validCount}</div>
+            <div className="soft-panel px-3 py-2">Errors: {preview.errorCount}</div>
           </div>
 
           {preview.previewRows.length > 0 ? (
@@ -114,7 +128,7 @@ export function CsvImportClient() {
                 </thead>
                 <tbody>
                   {preview.previewRows.map((row, index) => (
-                    <tr key={`${row.title}-${index}`} className="border-b border-foreground/10 last:border-b-0">
+                    <tr key={`${row.title}-${index}`} className="border-b border-foreground/10 transition-colors hover:bg-black/5 last:border-b-0">
                       <td className="py-2">{row.title}</td>
                       <td className="py-2">{row.artist || "-"}</td>
                       <td className="py-2">{row.persianYear}</td>
@@ -127,7 +141,7 @@ export function CsvImportClient() {
           ) : null}
 
           {preview.errors.length > 0 ? (
-            <div className="rounded-lg bg-red-100 p-3 text-sm text-red-700">
+            <div className="rounded-lg border border-red-300/45 bg-red-100 p-3 text-sm text-red-700">
               <p className="font-semibold">Validation errors:</p>
               <ul className="mt-1 list-disc space-y-1 pl-5">
                 {preview.errors.slice(0, 10).map((error) => (
@@ -139,14 +153,16 @@ export function CsvImportClient() {
             </div>
           ) : null}
 
-          <button
-            className="button button-primary"
-            disabled={loading || preview.validRows.length === 0}
-            onClick={onImport}
-            type="button"
-          >
-            Import Valid Rows
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              className="button button-primary"
+              disabled={loading || preview.validRows.length === 0}
+              onClick={onImport}
+              type="button"
+            >
+              Import Valid Rows
+            </button>
+          </div>
         </div>
       ) : null}
     </section>

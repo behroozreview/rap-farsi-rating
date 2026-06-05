@@ -8,13 +8,13 @@ type DatabaseSetupNoticeProps = {
 export function DatabaseSetupNotice({ title, description }: DatabaseSetupNoticeProps) {
   return (
     <main className="page-shell flex flex-1 flex-col gap-4 pb-10">
-      <section className="card p-6">
-        <p className="text-sm uppercase tracking-[0.2em] text-foreground/65">Setup required</p>
-        <h1 className="mt-2 text-3xl font-semibold" style={{ fontFamily: "var(--font-title)" }}>
+      <section className="card p-6 sm:p-7">
+        <p className="text-xs uppercase tracking-[0.28em] text-foreground/60">Setup required</p>
+        <h1 className="mt-2 text-3xl font-semibold sm:text-4xl" style={{ fontFamily: "var(--font-title)" }}>
           {title}
         </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-foreground/75">{description}</p>
-        <p className="mt-3 text-sm leading-6 text-foreground/75">
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-foreground/75 sm:text-base">{description}</p>
+        <p className="mt-3 rounded-lg border border-foreground/10 bg-[var(--surface-muted)] px-3 py-2 text-sm leading-6 text-foreground/78">
           Add a <strong>DATABASE_URL</strong> environment variable in your local env or in Vercel project
           settings, then reload the page.
         </p>

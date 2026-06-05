@@ -67,36 +67,50 @@ export function PublicSongFilters({
   }, [q, year, rating, searchParams, pathname, router, defaultYear]);
 
   return (
-    <form className="mt-5 flex flex-wrap gap-2" action="/" method="get" onSubmit={(event) => event.preventDefault()}>
-      <input
-        className="pill min-w-60"
-        type="search"
-        name="q"
-        placeholder="Search single title or artist"
-        value={q}
-        onChange={(event) => setQ(event.target.value)}
-      />
-      <select className="pill w-40" name="year" value={year} onChange={(event) => setYear(event.target.value)}>
-        <option value="all">All years</option>
-        {years.map((itemYear) => (
-          <option key={itemYear} value={itemYear}>
-            {itemYear}
-          </option>
-        ))}
-      </select>
-      <input
-        className="pill w-28"
-        type="number"
-        min={0}
-        max={9}
-        name="rating"
-        placeholder="Rating"
-        value={rating}
-        onChange={(event) => setRating(event.target.value)}
-      />
-      <Link className="button" href="/">
-        Reset
-      </Link>
+    <form className="mt-6 grid gap-3 md:grid-cols-[1.8fr_0.8fr_0.8fr_auto]" action="/" method="get" onSubmit={(event) => event.preventDefault()}>
+      <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground/80">
+        Search
+        <input
+          className="pill min-w-0"
+          type="search"
+          name="q"
+          placeholder="Song title or artist"
+          value={q}
+          onChange={(event) => setQ(event.target.value)}
+        />
+      </label>
+
+      <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground/80">
+        Year
+        <select className="pill" name="year" value={year} onChange={(event) => setYear(event.target.value)}>
+          <option value="all">All years</option>
+          {years.map((itemYear) => (
+            <option key={itemYear} value={itemYear}>
+              {itemYear}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground/80">
+        Min rating
+        <select className="pill" name="rating" value={rating} onChange={(event) => setRating(event.target.value)}>
+          <option value="">Any</option>
+          {Array.from({ length: 10 }, (_, item) => (
+            <option key={item} value={item}>
+              {item}+
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <div className="flex items-end">
+        <Link className="button w-full md:w-auto" href="/">
+          Reset filters
+        </Link>
+      </div>
+
+      <p className="text-xs text-foreground/65 md:col-span-4">Filters update automatically as you type and select.</p>
     </form>
   );
 }

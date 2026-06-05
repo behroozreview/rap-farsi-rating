@@ -40,38 +40,45 @@ export default async function StatsPage({ searchParams }: StatsPageProps) {
   }
 
   return (
-    <main className="page-shell flex flex-1 flex-col gap-4 pb-10">
-      <header className="card p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+    <main className="page-shell flex flex-1 flex-col gap-5 pb-10">
+      <header className="card p-6 sm:p-7">
+        <div className="grid gap-5 lg:grid-cols-[1.5fr_1fr] lg:items-start">
           <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-foreground/70">RapFarsi Singles Archive</p>
-            <h1 className="text-4xl font-semibold" style={{ fontFamily: "var(--font-title)" }}>
-              Singles Statistics
+            <p className="text-xs uppercase tracking-[0.28em] text-foreground/62">RapFarsi Singles Archive</p>
+            <h1 className="mt-2 text-3xl font-semibold sm:text-5xl" style={{ fontFamily: "var(--font-title)" }}>
+              Insights and score patterns
             </h1>
-            <p className="mt-2 text-sm text-foreground/75">
-              A summary of score distribution, yearly releases, and the most active artists.
+            <p className="mt-3 max-w-2xl text-sm text-foreground/75 sm:text-base">
+              Explore score distribution, release cadence per year, and which artists appear most in your archive.
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <form className="flex items-center gap-2" action="/stats" method="get">
-              <select className="pill w-40" name="year" defaultValue={selectedYearValue}>
-                <option value="all">All years</option>
-                {years.map((itemYear) => (
-                  <option key={itemYear} value={itemYear}>
-                    {itemYear}
-                  </option>
-                ))}
-              </select>
+
+          <div className="soft-panel p-4">
+            <form className="grid gap-2" action="/stats" method="get">
+              <label className="text-sm font-medium text-foreground/80">
+                Year scope
+                <select className="pill mt-1" name="year" defaultValue={selectedYearValue}>
+                  <option value="all">All years</option>
+                  {years.map((itemYear) => (
+                    <option key={itemYear} value={itemYear}>
+                      {itemYear}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <button className="button button-primary" type="submit">
-                Apply
+                Update analytics
               </button>
             </form>
-            <Link className="pill" href="/">
-              Back to Singles
-            </Link>
-            <Link className="pill" href="/admin">
-              Admin Panel
-            </Link>
+
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Link className="button" href="/">
+                Back to singles
+              </Link>
+              <Link className="button" href="/admin">
+                Open admin
+              </Link>
+            </div>
           </div>
         </div>
       </header>
@@ -112,7 +119,7 @@ export default async function StatsPage({ searchParams }: StatsPageProps) {
           <ul className="mt-4 space-y-2 text-sm">
             {stats.releasesByYear.length > 0 ? (
               stats.releasesByYear.map((item) => (
-                <li key={item.year} className="flex items-center justify-between rounded-lg bg-[var(--surface-strong)] px-3 py-2">
+                <li key={item.year} className="flex items-center justify-between rounded-lg border border-foreground/8 bg-[var(--surface-strong)] px-3 py-2">
                   <span>{item.year}</span>
                   <span>{item.count}</span>
                 </li>
@@ -129,7 +136,7 @@ export default async function StatsPage({ searchParams }: StatsPageProps) {
           <ul className="mt-4 space-y-2 text-sm">
             {stats.topArtists.length > 0 ? (
               stats.topArtists.map((item) => (
-                <li key={item.artist} className="flex items-center justify-between rounded-lg bg-[var(--surface-strong)] px-3 py-2">
+                <li key={item.artist} className="flex items-center justify-between rounded-lg border border-foreground/8 bg-[var(--surface-strong)] px-3 py-2">
                   <span className="truncate pr-3">{item.artist}</span>
                   <span>{item.count}</span>
                 </li>

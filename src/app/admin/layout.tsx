@@ -15,33 +15,34 @@ export default async function AdminLayout({
 
   return (
     <main className="page-shell pb-10">
-      <header className="card mb-4 p-5">
-        <p className="text-sm uppercase tracking-[0.2em] text-foreground/65">Admin</p>
-        <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+      <header className="card mb-4 p-5 sm:p-6">
+        <p className="text-xs uppercase tracking-[0.28em] text-foreground/60">Admin</p>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-3xl font-semibold" style={{ fontFamily: "var(--font-title)" }}>
+            <h1 className="text-3xl font-semibold sm:text-4xl" style={{ fontFamily: "var(--font-title)" }}>
               RapFarsi Control Panel
             </h1>
             <p className="text-sm text-foreground/70">Signed in as {session.user?.email}</p>
           </div>
-          <Link className="pill" href="/api/auth/signout">
+          <Link className="button" href="/api/auth/signout">
             Sign out
           </Link>
         </div>
-        <nav className="mt-4 flex flex-wrap gap-2 text-sm">
-          <Link className="pill" href="/admin">
+
+        <nav className="mt-5 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-5">
+          <Link className="button" href="/admin">
             Dashboard
           </Link>
-          <Link className="pill" href="/admin/songs">
+          <Link className="button" href="/admin/songs">
             Songs
           </Link>
-          <Link className="pill" href="/admin/songs/new">
+          <Link className="button" href="/admin/songs/new">
             Add Song
           </Link>
-          <Link className="pill" href="/admin/import">
+          <Link className="button" href="/admin/import">
             CSV Import
           </Link>
-          <Link className="pill" href="/">
+          <Link className="button" href="/">
             Public View
           </Link>
         </nav>

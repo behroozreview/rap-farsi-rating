@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { SectionHeading } from "@/components/section-heading";
+
 type SongFormData = {
   title: string;
   artist: string;
@@ -61,56 +63,51 @@ export function SongEditorForm({ mode, songId, initialValue }: SongEditorFormPro
   }
 
   return (
-    <form className="card flex flex-col gap-3 p-5" onSubmit={onSubmit}>
-      <label className="flex flex-col gap-1 text-sm">
-        Title
-        <input className="pill" name="title" required defaultValue={initialValue?.title ?? ""} />
-      </label>
+    <form className="card flex flex-col gap-4 p-5 sm:p-6" onSubmit={onSubmit}>
+      <SectionHeading
+        title={mode === "create" ? "Create a new song" : "Edit song"}
+        description="Fill in song details, rating, and release year for your archive."
+      />
 
-      <label className="flex flex-col gap-1 text-sm">
-        Artist
-        <input className="pill" name="artist" defaultValue={initialValue?.artist ?? ""} />
-      </label>
-
-      <label className="flex flex-col gap-1 text-sm">
-        URL
-        <input className="pill" name="url" defaultValue={initialValue?.url ?? ""} />
-      </label>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="flex flex-col gap-1 text-sm">
-          Rating (0-9)
-          <input
-            className="pill"
-            type="number"
-            min={0}
-            max={9}
-            name="rating"
-            required
-            defaultValue={initialValue?.rating ?? 5}
-          />
+      <div className="soft-panel grid gap-3 p-3 sm:grid-cols-2">
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground/82 sm:col-span-2">
+          Title
+          <input className="pill" name="title" required defaultValue={initialValue?.title ?? ""} />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground/82">
+          Artist
+          <input className="pill" name="artist" defaultValue={initialValue?.artist ?? ""} />
+        </label>
+
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground/82">
+          URL
+          <input className="pill" name="url" defaultValue={initialValue?.url ?? ""} placeholder="https://..." />
+        </label>
+
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground/82">
+          Rating (0-9)
+          <select className="pill" name="rating" required defaultValue={String(initialValue?.rating ?? 5)}>
+            {Array.from({ length: 10 }, (_, item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground/82">
           Persian Year
-          <input
-            className="pill"
-            type="number"
-            min={1350}
-            max={1499}
-            name="persianYear"
-            required
-            defaultValue={initialValue?.persianYear ?? 1405}
-          />
+          <input className="pill" type="number" min={1350} max={1499} name="persianYear" required defaultValue={initialValue?.persianYear ?? 1405} />
+        </label>
+
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground/82 sm:col-span-2">
+          Notes
+          <textarea className="pill min-h-32" name="notes" defaultValue={initialValue?.notes ?? ""} />
         </label>
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
-        Notes
-        <textarea className="pill min-h-28 rounded-xl" name="notes" defaultValue={initialValue?.notes ?? ""} />
-      </label>
-
-      {error ? <p className="rounded-md bg-red-100 p-2 text-sm text-red-700">{error}</p> : null}
+      {error ? <p className="rounded-lg border border-red-300/50 bg-red-100 p-2 text-sm text-red-700">{error}</p> : null}
 
       <button className="button button-primary w-fit" type="submit" disabled={loading}>
         {loading ? "Saving..." : mode === "create" ? "Create Song" : "Update Song"}

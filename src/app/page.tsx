@@ -49,31 +49,59 @@ export default async function Home({ searchParams }: HomeProps) {
   const latestYear = years[0];
   const { value: selectedYearValue } = resolveYearFilter(yearParam, latestYear);
   const defaultYearValue = latestYear ? String(latestYear) : "all";
+  const averageRating = songs.length
+    ? (songs.reduce((sum, song) => sum + song.rating, 0) / songs.length).toFixed(1)
+    : "-";
+  const highRatedCount = songs.filter((song) => song.rating >= 7).length;
 
   return (
-    <main className="page-shell flex flex-1 flex-col gap-4 pb-10">
-      <header className="card p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-foreground/70">RapFarsi Singles Archive</p>
-            <h1 className="text-4xl font-semibold" style={{ fontFamily: "var(--font-title)" }}>
-              Single Ratings (0-9)
+    <main className="page-shell flex flex-1 flex-col gap-5 pb-10">
+      <header className="card p-6 sm:p-7">
+        <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr] lg:items-start">
+          <div className="space-y-3">
+            <p className="text-xs uppercase tracking-[0.28em] text-foreground/60">RapFarsi Singles Archive</p>
+            <h1 className="text-3xl font-semibold leading-tight sm:text-5xl" style={{ fontFamily: "var(--font-title)" }}>
+              Browse and rate singles with context, not clutter
             </h1>
+            <p className="max-w-2xl text-sm text-foreground/75 sm:text-base">
+              A personal archive of RapFarsi tracks with searchable ratings, source links, and year-based filtering.
+            </p>
+
+            <div className="grid grid-cols-2 gap-2 pt-2 sm:max-w-xl sm:grid-cols-4">
+              <div className="soft-panel p-3">
+                <p className="text-xs uppercase tracking-wide text-foreground/65">Shown</p>
+                <p className="text-xl font-semibold">{songs.length}</p>
+              </div>
+              <div className="soft-panel p-3">
+                <p className="text-xs uppercase tracking-wide text-foreground/65">Average</p>
+                <p className="text-xl font-semibold">{averageRating}/9</p>
+              </div>
+              <div className="soft-panel p-3">
+                <p className="text-xs uppercase tracking-wide text-foreground/65">7+ Rated</p>
+                <p className="text-xl font-semibold">{highRatedCount}</p>
+              </div>
+              <div className="soft-panel p-3">
+                <p className="text-xs uppercase tracking-wide text-foreground/65">Year</p>
+                <p className="text-xl font-semibold">{selectedYearValue === "all" ? "All" : selectedYearValue}</p>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Link className="pill" href="/stats">
-              Statistics
+
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+            <Link className="button button-primary" href="/stats">
+              View statistics
             </Link>
-            <Link className="pill" href="/admin">
-              {authConfigured ? "Admin Panel" : "Admin Setup"}
+            <Link className="button" href="/admin">
+              {authConfigured ? "Open admin panel" : "Setup admin"}
             </Link>
             {authConfigured ? (
-              <Link className="pill" href="/api/auth/signin">
-                Admin Sign In
+              <Link className="button" href="/api/auth/signin">
+                Admin sign in
               </Link>
             ) : null}
           </div>
         </div>
+
         <PublicSongFilters
           key={`${q ?? ""}|${selectedYearValue}|${params.rating ?? ""}`}
           years={years}
@@ -85,11 +113,37 @@ export default async function Home({ searchParams }: HomeProps) {
       </header>
 
       <section className="card overflow-hidden">
-        <div className="border-b border-foreground/10 px-5 py-3">
-          <p className="text-sm text-foreground/75">{songs.length} singles found</p>
+        <div className="flex items-center justify-between border-b border-foreground/10 bg-[var(--surface-muted)] px-5 py-3">
+          <p className="text-sm font-medium text-foreground/80">{songs.length} singles found</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-foreground/55">Sorted by latest year</p>
         </div>
+
+        <div className="md:hidden">
+          <ul className="divide-y divide-foreground/10">
+            {songs.map((song) => (
+              <li key={song.id} className={`${getPublicRatingClass(song.rating)} p-4`}>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <Link href={`/songs/${song.id}`} className="text-base font-semibold leading-snug hover:underline">
+                      {song.title}
+                    </Link>
+                    <p className="text-sm text-foreground/75">{song.artist || "Unknown artist"}</p>
+                  </div>
+                  <span className="rounded-full border border-foreground/15 bg-white/65 px-2 py-0.5 text-xs font-semibold">
+                    {song.rating}/9
+                  </span>
+                </div>
+                <div className="mt-2 flex items-center justify-between text-sm text-foreground/75">
+                  <span>{song.persianYear}</span>
+                  {song.url ? <SongSourceLink href={song.url} compact /> : <span>-</span>}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[680px] text-left">
+          <table className="hidden w-full min-w-[700px] text-left md:table">
             <thead>
               <tr className="bg-[var(--surface-strong)] text-sm uppercase tracking-wide text-foreground/70">
                 <th className="px-5 py-3">Title</th>
@@ -103,7 +157,7 @@ export default async function Home({ searchParams }: HomeProps) {
               {songs.map((song) => (
                 <tr
                   key={song.id}
-                  className={`${getPublicRatingClass(song.rating)} border-b border-foreground/10 last:border-b-0`}
+                  className={`${getPublicRatingClass(song.rating)} border-b border-foreground/10 transition-colors hover:bg-black/5 last:border-b-0`}
                 >
                   <td className="px-5 py-3">
                     <Link href={`/songs/${song.id}`} className="font-semibold hover:underline">
