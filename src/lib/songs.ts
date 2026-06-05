@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, ilike, isNotNull, ne, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, isNotNull, lte, ne, or, sql } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { songs } from "@/db/schema";
@@ -73,7 +73,7 @@ export async function listSongs(filters: SongFilters = {}) {
     predicates.push(eq(songs.persianYear, filters.year));
   }
   if (filters.rating !== undefined) {
-    predicates.push(eq(songs.rating, filters.rating));
+    predicates.push(lte(songs.rating, filters.rating));
   }
 
   const whereClause = predicates.length > 0 ? and(...predicates) : undefined;

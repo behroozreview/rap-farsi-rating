@@ -93,12 +93,12 @@ export function PublicSongFilters({
       </label>
 
       <label className="flex flex-col gap-1.5 text-[0.8rem] font-medium uppercase tracking-[0.18em] text-foreground/72">
-        Min rating
+        Max rating
         <select className="pill" name="rating" value={rating} onChange={(event) => setRating(event.target.value)}>
           <option value="">Any</option>
           {Array.from({ length: 10 }, (_, item) => (
             <option key={item} value={item}>
-              {item}+
+              {item} or less
             </option>
           ))}
         </select>

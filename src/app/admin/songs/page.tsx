@@ -86,12 +86,12 @@ export default async function SongsAdminPage({ searchParams }: SongsAdminPagePro
         </label>
 
         <label className="text-sm font-medium text-foreground/80">
-          Min rating
+          Max rating
           <select className="pill mt-1" name="rating" defaultValue={params.rating ?? ""}>
             <option value="">Any</option>
             {Array.from({ length: 10 }, (_, item) => (
               <option key={item} value={item}>
-                {item}+
+                {item} or less
               </option>
             ))}
           </select>

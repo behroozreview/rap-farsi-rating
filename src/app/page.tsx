@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 import { PublicSongFilters } from "@/components/public-song-filters";
+import { PublicSongTable } from "@/components/public-song-table";
 import { SongSourceLink } from "@/components/song-source-link";
-import { isAuthConfigured } from "@/lib/auth-config";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { isMissingDatabaseConfigError } from "@/lib/database-errors";
 import { listSongYears, listSongs, resolveYearFilter } from "@/lib/songs";
@@ -21,7 +21,6 @@ export default async function Home({ searchParams }: HomeProps) {
   const q = params.q?.trim();
   const yearParam = params.year?.trim();
   const rating = params.rating ? Number(params.rating) : undefined;
-  const authConfigured = isAuthConfigured();
 
   let songs;
   let years;
@@ -61,6 +60,9 @@ export default async function Home({ searchParams }: HomeProps) {
           <div className="space-y-5">
             <p className="text-[0.68rem] uppercase tracking-[0.34em] text-foreground/58">Behroozreview single song rating</p>
             <div className="max-w-4xl space-y-4">
+              <h1 className="text-5xl leading-none sm:text-7xl lg:text-[5.5rem]" style={{ fontFamily: "var(--font-title)" }}>
+                Behroozreview single song rating archive
+              </h1>
               <p className="max-w-2xl text-sm leading-7 text-foreground/78 sm:text-base">
                 Behroozreview tracks individual RapFarsi songs through rating, year, and source context with a cleaner editorial lens.
               </p>
@@ -104,14 +106,6 @@ export default async function Home({ searchParams }: HomeProps) {
               <Link className="button button-primary" href="/stats">
                 Read the stats
               </Link>
-              <Link className="button" href="/admin">
-                {authConfigured ? "Open admin panel" : "Setup admin"}
-              </Link>
-              {authConfigured ? (
-                <Link className="button" href="/api/auth/signin">
-                  Admin sign in
-                </Link>
-              ) : null}
             </div>
           </aside>
         </div>
@@ -161,43 +155,7 @@ export default async function Home({ searchParams }: HomeProps) {
           </ul>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="hidden w-full min-w-[700px] text-left md:table">
-            <thead>
-              <tr className="bg-[var(--surface-strong)] text-sm uppercase tracking-wide text-foreground/70">
-                <th className="px-5 py-3">Title</th>
-                <th className="px-5 py-3">Artist</th>
-                <th className="px-5 py-3">Year</th>
-                <th className="px-5 py-3">Rating</th>
-                <th className="px-5 py-3">Source</th>
-              </tr>
-            </thead>
-            <tbody>
-              {songs.map((song) => (
-                <tr
-                  key={song.id}
-                  className={`${getPublicRatingClass(song.rating)} border-b border-foreground/10 transition-colors hover:bg-black/5 last:border-b-0`}
-                >
-                  <td className="px-5 py-3">
-                    <Link href={`/songs/${song.id}`} className="text-xl hover:underline" style={{ fontFamily: "var(--font-title)" }}>
-                      {song.title}
-                    </Link>
-                  </td>
-                  <td className="px-5 py-3 text-foreground/80">{song.artist || "-"}</td>
-                  <td className="px-5 py-3">{song.persianYear}</td>
-                  <td className="px-5 py-3">{song.rating}/9</td>
-                  <td className="px-5 py-3">
-                    {song.url ? (
-                      <SongSourceLink href={song.url} compact />
-                    ) : (
-                      <span className="text-foreground/60">-</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <PublicSongTable songs={songs} />
       </section>
     </main>
   );
