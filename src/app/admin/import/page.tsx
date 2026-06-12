@@ -4,10 +4,11 @@ export default function AdminImportPage() {
   return (
     <section>
       <h2 className="mb-3 text-2xl font-semibold" style={{ fontFamily: "var(--font-title)" }}>
-        Bulk Import from CSV
+        Bulk Import
       </h2>
       <p className="mb-3 text-sm text-foreground/70">
-        Expected columns: title,url,rating,persian_year and optional artist.
+        In this same view, upload CSV or paste copied Google Sheets rows. Expected fields: title, rating,
+        persian_year, with optional artist and url.
       </p>
       <CsvImportClient />
     </section>
