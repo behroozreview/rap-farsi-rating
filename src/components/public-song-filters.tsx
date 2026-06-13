@@ -67,7 +67,7 @@ export function PublicSongFilters({
   }, [q, year, rating, searchParams, pathname, router, defaultYear]);
 
   return (
-    <form className="mt-8 grid gap-3 border-t border-foreground/12 pt-6 md:grid-cols-[1.8fr_0.8fr_0.8fr_auto]" action="/" method="get" onSubmit={(event) => event.preventDefault()}>
+    <form className="mt-4 grid gap-2 border-t border-foreground/12 pt-4 sm:mt-8 sm:gap-3 sm:pt-6 md:grid-cols-[1.8fr_0.8fr_0.8fr_auto]" action="/" method="get" onSubmit={(event) => event.preventDefault()}>
       <label className="flex flex-col gap-1.5 text-[0.8rem] font-medium uppercase tracking-[0.18em] text-foreground/72">
         Search
         <input
@@ -110,7 +110,7 @@ export function PublicSongFilters({
         </Link>
       </div>
 
-      <p className="text-xs uppercase tracking-[0.18em] text-foreground/55 md:col-span-4">Filters update automatically as you type and select.</p>
+      <p className="hidden text-xs uppercase tracking-[0.18em] text-foreground/55 md:col-span-4 sm:block">Filters update automatically as you type and select.</p>
     </form>
   );
 }
