@@ -111,7 +111,6 @@ export default async function Home({ searchParams }: HomeProps) {
         </div>
 
         <PublicSongFilters
-          key={`${q ?? ""}|${selectedYearValue}|${params.rating ?? ""}`}
           years={years}
           initialQ={q}
           initialYear={selectedYearValue}
